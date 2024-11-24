@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-db
+    restart: always
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: ecommerce-cards
+    volumes:
+      - ./shared_db.sql:/docker-entrypoint-initdb.d/shared_db.sql # Arquivo de inicialização
+      - mysql-data:/var/lib/mysql # Volume persistente para o banco de dados
+
+volumes:
+  mysql-data: # Volume nomeado para persistir dados

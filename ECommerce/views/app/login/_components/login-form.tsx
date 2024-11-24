@@ -12,6 +12,7 @@ import {
 import { Input } from "@/app/_components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -95,7 +96,14 @@ const LoginForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Entrar</Button>
+          <div className="flex flex-col">
+            <Link className="text-sm mb-5" href={"/forgot-password"}>
+              Esqueci minha senha
+            </Link>
+            <Button className="w-[90px]" type="submit">
+              Entrar
+            </Button>
+          </div>
         </form>
       </Form>
     </>
