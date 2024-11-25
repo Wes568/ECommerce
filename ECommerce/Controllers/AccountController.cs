@@ -1,7 +1,13 @@
-﻿using ECommerce.ViewModels;
+﻿using ECommerce.Services;
+using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ECommerce.Controllers
 {
@@ -10,11 +16,15 @@ namespace ECommerce.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IConfiguration _configuration;
+        private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signManager, IConfiguration configuration, TokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signManager;
+            _configuration = configuration;
+            _tokenService = tokenService;
         }
 
         [AllowAnonymous]
@@ -28,28 +38,54 @@ namespace ECommerce.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel loginVM)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel loginVM)
         {
-            if (!ModelState.IsValid)
-                return View(loginVM);
-
-            var user = await _userManager.FindByNameAsync(loginVM.UserName);
-
-            if(user != null)
+            if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
-                if(result.Succeeded)
-                {
-                    if(string.IsNullOrEmpty(loginVM.ReturnUrl))
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
 
-                    return Redirect(loginVM.ReturnUrl);
+                var user = await _userManager.FindByNameAsync(loginVM.UserName);
+
+                if (user != null)
+                {
+                    if (await _userManager.IsLockedOutAsync(user))
+                        return BadRequest(new { error = true, errorMessage = "A conta está bloqueada." });
+
+                    //if (!await _userManager.IsEmailConfirmedAsync(user))
+                    //   return BadRequest(new { error = true, errorMessage = "O e-mail não foi confirmado." });
+
+                    var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
+
+                    if (result.Succeeded)
+                    {
+                        var token = _tokenService.GenerateToken(user);
+
+                        return Ok(new
+                        {
+                            user = user,
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo,
+                            error = false,
+                            errorMessage = ""
+
+                        });
+
+                    }
                 }
             }
-            ModelState.AddModelError("", "Falha ao realizar o login!");
-            return View(loginVM);
+
+            var errorMessages = ModelState.Values
+            .SelectMany(state => state.Errors)
+            .Select(errorMessages => errorMessages.ErrorMessage)
+            .ToList();
+
+            return BadRequest(new
+            {
+                user = "",
+                token = "",
+                expiration = "",
+                error = true,
+                errorMessage = (errorMessages != null && errorMessages.Any()) ? errorMessages : new List<string> { "Usuário não encontrado." }
+            });
         }
 
         [AllowAnonymous]
@@ -60,25 +96,49 @@ namespace ECommerce.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(LoginViewModel registroVM)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel registroVM)
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = registroVM.UserName };
+                var user = new IdentityUser
+                {
+                    UserName = registroVM.UserName,
+                    Email = registroVM.Email
+                };
+
                 var result = await _userManager.CreateAsync(user, registroVM.Password);
-                
-                if(result.Succeeded)
+
+                if (result.Succeeded)
                 {
-                    //await _signInManager.SignInAsync(use, isPersistent: false);
-                    return RedirectToAction("Login", "Account");
-                }
-                else
-                {
-                    this.ModelState.AddModelError("Registro", "Falha ao registrar o usuário");
+                    var token = _tokenService.GenerateToken(user);
+
+                    return Ok(new
+                    {
+                        user = user,
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        expiration = token.ValidTo,
+                        error = false,
+                        errorMessage = ""
+
+                    });
                 }
             }
-            return View(registroVM);
+
+            var errorMessages = ModelState.Values
+                .SelectMany(state => state.Errors)
+                .Select(errorMessages => errorMessages.ErrorMessage)
+                .ToList();
+
+            return BadRequest(new
+            {
+                user = "",
+                token = "",
+                expiration = "",
+                error = true,
+                errorMessage = (errorMessages != null && errorMessages.Any()) ? errorMessages : new List<string> { "Nome de usuário indisponível." }
+            });
+
         }
 
         [AllowAnonymous]
@@ -91,4 +151,5 @@ namespace ECommerce.Controllers
             return RedirectToAction("Index", "Home");
         }
     }
+
 }

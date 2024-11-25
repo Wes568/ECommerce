@@ -2,8 +2,12 @@
 using ECommerce.Models;
 using ECommerce.Repositories;
 using ECommerce.Repositories.Interfaces;
+using ECommerce.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ECommerce;
 public class Startup
@@ -18,6 +22,23 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        var secretKey = Configuration["JwtSettings:SecretKey"];
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "suaaplicacao.com",
+            ValidAudience = "suaaplicacao.com",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sua-chave-secreta-super-segura"))
+        };
+    });
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -30,12 +51,13 @@ public class Startup
         services.AddTransient<IPedidoRepository, PedidoRepository>();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
+        services.AddScoped<TokenService>();
         services.AddControllersWithViews();
 
         services.AddMemoryCache();
         services.AddSession();
-    
-        
+
+
     }
 
 
@@ -57,8 +79,6 @@ public class Startup
         app.UseAuthentication();
         app.UseRouting();
         app.UseSession();
-        app.UseAuthentication();
-
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
