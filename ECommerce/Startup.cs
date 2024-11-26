@@ -33,9 +33,9 @@ public class Startup
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "suaaplicacao.com",
-            ValidAudience = "suaaplicacao.com",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sua-chave-secreta-super-segura"))
+            ValidIssuer = "ecommerce",
+            ValidAudience = "ecommerce",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
         };
     });
 

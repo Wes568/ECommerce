@@ -15,6 +15,5 @@ namespace ECommerce.Models
         [Required(ErrorMessage = "Informe a descrição da categoria")]
         [Display(Name = "Descrição")]
         public string Descricao { get; set; }
-        public List<Produto> Produtos { get; set;}
     }
 }

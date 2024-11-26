@@ -5,7 +5,7 @@ namespace ECommerce.ViewModels
 {
     public class ProdutoListViewModel
     {
-        public IEnumerable<Produto> Produtos { get; set; }
+        public List<Produto> Produtos { get; set; }
         public string CategoriaAtual { get; set; }
     }
 }
