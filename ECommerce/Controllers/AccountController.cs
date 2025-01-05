@@ -136,7 +136,7 @@ namespace ECommerce.Controllers
                 token = "",
                 expiration = "",
                 error = true,
-                errorMessage = (errorMessages != null && errorMessages.Any()) ? errorMessages : new List<string> { "Nome de usuário indisponível." }
+                errorMessage = (errorMessages != null && errorMessages.Any()) ? errorMessages : new List<string> { "Nome de usuário indisponível." } //debugar qnd a senha nao conter caractere especial.
             });
 
         }

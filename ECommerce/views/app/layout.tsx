@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
 import Header from "./_components/header/header";
+import { AuthProvider } from "./contexts/auth-context";
+import { Toaster } from "./_components/ui/sonner";
+import React from "react"; // Import necessário para React.StrictMode
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -20,8 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${mulish.className} antialiased dark`}>
-        <Header />
-        {children}
+        <React.StrictMode>
+          <Toaster />
+          <AuthProvider>
+            <Header />
+            {children}
+          </AuthProvider>
+        </React.StrictMode>
       </body>
     </html>
   );

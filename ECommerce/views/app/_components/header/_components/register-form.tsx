@@ -19,37 +19,53 @@ import {
   FormLabel,
   FormMessage,
 } from "../../ui/form";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { register } from "../_actions";
+import { useAuth } from "@/app/contexts/auth-context";
 
 const formSchema = z.object({
-  username: z
+  userName: z
     .string()
     .min(1, { message: "Por favor, preencha o seu usuário." }),
   email: z.string().email({
     message: "Por favor, insira um e-mail válido.",
   }),
-  password: z.string().min(6, {
-    message: "A senha deve conter no mínimo 6 dígitos.",
-  }),
+  password: z
+    .string()
+    .min(6, {
+      message: "A senha deve conter no mínimo 6 caracteres.",
+    })
+    .regex(/[\W_]/, {
+      message: "A senha deve conter pelo menos um caractere especial.",
+    }),
 });
 
 const RegisterForm = () => {
   const [view, setView] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { setAuth } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      userName: "",
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
+    try {
+      await register(values, setAuth);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
   };
 
   return (
@@ -69,7 +85,7 @@ const RegisterForm = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="username"
+                name="userName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Usuário</FormLabel>
@@ -126,9 +142,16 @@ const RegisterForm = () => {
                   </FormItem>
                 )}
               />
-              <Button className="text-white" type="submit">
-                Cadastrar
-              </Button>
+              {loading ? (
+                <Button className="text-white" disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Cadastrando
+                </Button>
+              ) : (
+                <Button className="text-white" type="submit">
+                  Cadastrar
+                </Button>
+              )}
             </form>
           </Form>
         </DialogContent>
