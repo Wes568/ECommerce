@@ -21,5 +21,11 @@ namespace ECommerce.Repositories
         {
             return _context.Produtos.FirstOrDefault(l => l.ProdutoId == ProdutoId);
         }
+
+        public void Register(Produto pedido)
+        {
+            _context.Produtos.Add(pedido);
+            _context.SaveChanges();
+        }
     }
 }

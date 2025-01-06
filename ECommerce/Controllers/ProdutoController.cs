@@ -1,8 +1,12 @@
 ﻿using ECommerce.Models;
 using ECommerce.Repositories.Interfaces;
+using ECommerce.Services;
 using ECommerce.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ECommerce.Controllers
 {
@@ -134,6 +138,50 @@ namespace ECommerce.Controllers
                     errorMessage = ex.Message == "" ? ex.Message : "Erro ao buscar produtos."
                 });
             }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public IActionResult Register([FromBody] ProdutoViewModel produtoVM)
+        {
+            if (ModelState.IsValid)
+            {
+
+                Produto product = new Produto()
+                {
+                    Nome = produtoVM.Nome,
+                    DescricaoCurta = produtoVM.DescricaoCurta,
+                    DescricaoDetalhada = produtoVM.DescricaoDetalhada,
+                    Preco = produtoVM.Preco,
+                    ImagemUrl = produtoVM.ImagemUrl,
+                    ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl,
+                    IsProdutoPreferido = produtoVM.IsProdutoPreferido,
+                    EmEstoque = produtoVM.EmEstoque,
+                    CategoriaId = produtoVM.CategoriaId
+                };
+
+                _ProdutoRepository.Register(product);
+
+                return Ok(new
+                {
+                    error = false,
+                    errorMessage = ""
+
+                });
+            }
+
+            var errorMessages = ModelState.Values
+                .SelectMany(state => state.Errors)
+                .Select(errorMessages => errorMessages.ErrorMessage)
+                .ToList();
+
+            return BadRequest(new
+            {
+                error = true,
+                errorMessage = (errorMessages != null && errorMessages.Any()) ? errorMessages : new List<string> { "Erro desconhecido ao tentar registrar o produto!" }
+            });
 
         }
     }

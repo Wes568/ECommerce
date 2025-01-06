@@ -28,15 +28,6 @@ namespace ECommerce.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
-        {
-            return View(new LoginViewModel()
-            {
-                ReturnUrl = returnUrl
-            });
-        }
-
-        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginViewModel loginVM)
         {
@@ -86,12 +77,6 @@ namespace ECommerce.Controllers
                 error = true,
                 errorMessage = (errorMessages != null && errorMessages.Any()) ? errorMessages : new List<string> { "Usuário não encontrado." }
             });
-        }
-
-        [AllowAnonymous]
-        public IActionResult Register()
-        {
-            return View();
         }
 
         [AllowAnonymous]
@@ -145,10 +130,26 @@ namespace ECommerce.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
-            HttpContext.User = null;
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                HttpContext.Session.Clear();
+                HttpContext.User = null;
+                await _signInManager.SignOutAsync();
+
+                return Ok(new
+                {
+                    error = false,
+                    errorMessage = ""
+                });
+            }
+            catch
+            {
+                return BadRequest(new
+                {
+                    error = true,
+                    errorMessage = "Houve um erro para deslogar!"
+                });
+            }
         }
     }
 
