@@ -23,7 +23,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import RegisterForm from "./register-form";
-import { useAuth } from "@/app/contexts/auth-context";
+import { useAuth } from "@/app/_contexts/auth-context";
 import { login } from "../_actions";
 
 const formSchema = z.object({
