@@ -40,6 +40,8 @@ namespace ECommerce.Models
 
         [Display(Name = "Preferido?")]
         public bool IsProdutoPreferido { get; set; }
+        [Display(Name = "Usuário que registrou o produto")]
+        public string RegisterUserId { get; set; }
 
         [Display(Name = "Estoque")]
         public bool EmEstoque { get; set; }

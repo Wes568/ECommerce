@@ -151,6 +151,41 @@ namespace ECommerce.Controllers
                 });
             }
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> GetUserByToken(string token)
+        {
+            try
+            {
+                var userName = _tokenService.GetUserIdFromTokenAsync(token);
+                var user = await _userManager.FindByNameAsync(userName);
+
+                return Ok(new
+                {
+                    user = user,
+                    error = false,
+                    errorMessage = ""
+                });
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(new
+                {
+                    user = "",
+                    token = "",
+                    expiration = "",
+                    error = true,
+                    errorMessage = "Usuário não encontrado... " + ex.Message
+                });
+
+            }
+
+
+
+        }
     }
 
 }

@@ -46,5 +46,40 @@ namespace ECommerce.Services
 
             return token;
         }
+
+        public string GetUserIdFromTokenAsync(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]);
+
+            try
+            {
+                var parameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = "ecommerce", 
+                    ValidAudience = "ecommerce", 
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+
+                var principal = tokenHandler.ValidateToken(token, parameters, out SecurityToken validatedToken);
+                var userName = principal.Identity.Name;
+                               
+                if (userName == null)
+                {
+                    throw new Exception("Token não contém o ID do usuário.");
+                }
+
+                return userName;
+
+            }
+            catch (Exception ex)
+            {
+                throw new SecurityTokenException("Token inválido.", ex);
+            }
+        }
     }
 }
