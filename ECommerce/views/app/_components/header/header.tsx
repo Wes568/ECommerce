@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { AlignJustify, SearchIcon, X } from "lucide-react";
+import { AlignJustify, PackagePlus, SearchIcon, X } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import MenuShoppingCar from "../menu-shopping-car";
@@ -15,7 +15,7 @@ import MenuMobile from "./_components/menu-mobile";
 const Header = () => {
   const [open, setOpen] = useState(false);
   return (
-    <section className="top-0 fixed w-full">
+    <section className="top-0 fixed w-screen">
       <div className="bg-glass backdrop-blur-glass p-4 border-y border-gray-300/20 lg:px-0">
         <div className="container">
           <nav className="flex flex-col justify-between w-100 lg:items-center lg:flex-row">
@@ -41,9 +41,12 @@ const Header = () => {
                 </Button>
               </div>
             </div>
-            <div className="hidden lg:flex lg:items-center lg:gap-5">
+            <div className="hidden lg:flex lg:items-center lg:gap-10">
               <LoginForm />
               <MenuShoppingCar />
+              <Link href={"/product-management"}>
+                <PackagePlus />
+              </Link>
             </div>
           </nav>
         </div>
@@ -60,8 +63,8 @@ const Header = () => {
       <div
         className={`${
           open
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-full pointer-events-none"
+            ? "opacity-100 translate-y-0  h-screen z-50"
+            : "opacity-0 -translate-y-full pointer-events-none h-0  z-[-1]"
         } flex h-screen md:h-0 bg-glass backdrop-blur-glass z-10 flex-col items-center transition-all duration-300 ease-in-out`}
       >
         <MenuMobile />

@@ -14,6 +14,8 @@ interface RegisterInterface {
   password: string;
 }
 
+
+
 export const login = async (credentials: LoginInterface, setAuth: (auth: any) => void) => {
   try {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Login`, credentials);
