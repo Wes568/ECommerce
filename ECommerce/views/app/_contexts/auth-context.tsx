@@ -54,14 +54,14 @@ export const AuthProvider = ({ children }: IChildren) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-
-    if (storedToken) {
+    const storedUsername = localStorage.getItem("username");
+    if (storedToken && storedUsername) {
       setAuth({
-        username: auth.username,
+        username: storedUsername,
         token: storedToken,
       });
     }
-  }, [auth.username]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth, products, setProducts }}>

@@ -21,7 +21,7 @@ export const upsertProduct = async (product: IProduct) => {
     if (product.produtoId) {
       console.log("Alteração do Produto")
     } else {
-      response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Login`)
+      response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Login`)
     }
     return response ? response.data : null;
   } catch (error) {

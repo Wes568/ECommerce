@@ -23,7 +23,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { register } from "../_actions";
+import { useRegister } from "../_actions";
 import { useAuth } from "@/app/_contexts/auth-context";
 
 const formSchema = z.object({
@@ -45,8 +45,8 @@ const formSchema = z.object({
 
 const RegisterForm = () => {
   const [view, setView] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const { setAuth } = useAuth();
+  const { mutate, isPending } = useRegister(setAuth);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,14 +58,7 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
-    try {
-      await register(values, setAuth);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    }
+    mutate(values);
   };
 
   return (
@@ -142,7 +135,7 @@ const RegisterForm = () => {
                   </FormItem>
                 )}
               />
-              {loading ? (
+              {isPending ? (
                 <Button className="text-white" disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Cadastrando

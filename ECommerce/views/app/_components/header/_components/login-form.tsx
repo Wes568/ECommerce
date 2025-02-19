@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Menubar,
   MenubarContent,
@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import RegisterForm from "./register-form";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { login } from "../_actions";
+import { useLogin } from "../_actions";
 
 const formSchema = z.object({
   userName: z
@@ -37,8 +37,8 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const [view, setView] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const { auth, setAuth } = useAuth();
+  const { mutate, isPending } = useLogin(setAuth);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,15 +48,12 @@ const LoginForm = () => {
     },
   });
 
+  useEffect(() => {
+    console.log("use effect do login", auth);
+  }, [auth]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
-    try {
-      await login(values, setAuth);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.error(error);
-    }
+    mutate(values);
   };
 
   const logout = () => {
@@ -70,7 +67,7 @@ const LoginForm = () => {
         <MenubarMenu>
           <MenubarTrigger className="gap-2">
             <CircleUserRound size={30} />
-            {!localStorage.getItem("token") ? (
+            {!auth.token ? (
               <div className="flex flex-col">
                 <h2 className="font-semibold ">Faça seu login</h2>
                 <p className="text-sm">ou Cadastre-se</p>
@@ -83,7 +80,7 @@ const LoginForm = () => {
             )}
           </MenubarTrigger>
           <MenubarContent className="p-4 w-[320px]">
-            {!localStorage.getItem("token") ? (
+            {!auth.token ? (
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
@@ -143,7 +140,7 @@ const LoginForm = () => {
                       Esqueci minha senha
                     </Link>
                     <div className="flex flex-col gap-2">
-                      {loading ? (
+                      {isPending ? (
                         <Button className="text-white" disabled>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Entrando

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import axios, { AxiosError } from "axios";
-import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 interface LoginInterface {
   userName: string;
@@ -15,33 +16,43 @@ interface RegisterInterface {
 }
 
 
+const loginRequest = async (credentials: LoginInterface) => {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Login`, credentials);
+  return response.data;
+};
 
-export const login = async (credentials: LoginInterface, setAuth: (auth: any) => void) => {
-  try {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Login`, credentials);
-    setAuth({ username: response.data.user.userName, token: response.data.token });
-    localStorage.setItem("token", response.data.token)
-    toast.success(`Bem-vindo, ${response.data.user.userName}`);
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof AxiosError) {
+export const useLogin = (setAuth: (auth: any) => void) => {
+  return useMutation({
+    mutationFn: loginRequest,
+    onSuccess: (data) => {
+      setAuth({ username: data.user.userName, token: data.token });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.user.userName);
+      toast.success(`Bem-vindo, ${data.user.userName}`);
+    },
+    onError: (error) => {
       toast.error("Nome de usuário ou senha inválidos");
       console.error("Erro ao logar usuário:", error);
     }
-  }
+  });
 };
 
-export const register = async (credentials: RegisterInterface, setAuth: (auth: any) => void) => {
-  try {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Register`, credentials);
-    setAuth({ username: response.data.user.userName, token: response.data.token });
-    localStorage.setItem("token", response.data.token)
-    toast.success(`Bem-vindo, ${response.data.user.userName}`);
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof AxiosError) {
-      toast.error("Nome de usuário ou senha inválidos");
+const registerRequest = async (credentials: RegisterInterface) => {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Register`, credentials);
+  return response.data;
+};
+
+export const useRegister = (setAuth: (auth: any) => void) => {
+  return useMutation({
+    mutationFn: registerRequest,
+    onSuccess: (data) => {
+      setAuth({ username: data.user.userName, token: data.token });
+      localStorage.setItem("token", data.token);
+      toast.success(`Bem-vindo, ${data.user.userName}`);
+    },
+    onError: (error) => {
+      toast.error("Erro ao registrar usuário");
       console.error("Erro ao registrar usuário:", error);
     }
-  }
-};
+  });
+}
