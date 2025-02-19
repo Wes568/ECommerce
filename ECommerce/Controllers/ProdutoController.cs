@@ -12,10 +12,12 @@ namespace ECommerce.Controllers
 {
     public class ProdutoController : Controller
     {
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IProdutoRepository _ProdutoRepository;
 
-        public ProdutoController(IProdutoRepository ProdutoRepository)
+        public ProdutoController(IProdutoRepository ProdutoRepository, UserManager<IdentityUser> userManager)
         {
+            _userManager = userManager;
             _ProdutoRepository = ProdutoRepository;
         }
 
@@ -159,6 +161,7 @@ namespace ECommerce.Controllers
                     ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl,
                     IsProdutoPreferido = produtoVM.IsProdutoPreferido,
                     EmEstoque = produtoVM.EmEstoque,
+                    RegisterUserId = _userManager.GetUserId(User),
                     CategoriaId = produtoVM.CategoriaId
                 };
 
