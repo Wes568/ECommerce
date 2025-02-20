@@ -3,6 +3,7 @@
 
 import { loginRequest, registerRequest } from "@/app/_components/header/_actions";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export const useLogin = (setAuth: (auth: any) => void) => {
@@ -14,8 +15,9 @@ export const useLogin = (setAuth: (auth: any) => void) => {
       localStorage.setItem("username", data.user.userName);
       toast.success(`Bem-vindo, ${data.user.userName}`);
     },
-    onError: (error) => {
-      toast.error("Nome de usuário ou senha inválidos");
+    onError: (error: AxiosError<any>) => {
+      const errorMessage = error.response?.data?.errorMessage || "Erro ao fazer login";
+      toast.error(errorMessage);
       console.error("Erro ao logar usuário:", error);
     }
   });
@@ -29,8 +31,9 @@ export const useRegister = (setAuth: (auth: any) => void) => {
       localStorage.setItem("token", data.token);
       toast.success(`Bem-vindo, ${data.user.userName}`);
     },
-    onError: (error) => {
-      toast.error("Erro ao registrar usuário");
+    onError: (error: AxiosError<any>) => {
+      const errorMessage = error.response?.data?.errorMessage || "Erro ao registrar usuário";
+      toast.error(errorMessage);
       console.error("Erro ao registrar usuário:", error);
     }
   });

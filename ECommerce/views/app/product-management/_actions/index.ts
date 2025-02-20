@@ -18,9 +18,14 @@ export interface IProduct {
 export const upsertProductRequest = async (product: IProduct) => {
   let response;
   if (product.produtoId) {
-    response = await api.put(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/${product.produtoId}`)
+    response = await api.put(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Update/`, product)
   } else {
     response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Register`, product)
   }
+  return response.data
+}
+
+export const getProductsByUser = async () => {
+  const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/ListProductsByUser/`)
   return response.data
 }

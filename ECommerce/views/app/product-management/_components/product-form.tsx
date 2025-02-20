@@ -55,9 +55,7 @@ const formSchema = z.object({
   }),
   imagemUrl: z.string(),
   imagemThumbnailUrl: z.string(),
-  preco: z.number({ required_error: "O preço é obrigatório." }).positive({
-    message: "O preço deve ser positivo.",
-  }),
+  preco: z.number({ required_error: "O preço é obrigatório." }),
   isProdutoPreferido: z.boolean({
     required_error: "Preferência sobre o produto é obrigatória.",
   }),

@@ -25,13 +25,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${mulish.className} antialiased dark`}>
         <QueryProvider>
-          <React.StrictMode>
-            <Toaster />
-            <AuthProvider>
-              <Header />
-              {children}
-            </AuthProvider>
-          </React.StrictMode>
+          <Toaster />
+          <AuthProvider>
+            <Header />
+            {children}
+          </AuthProvider>
         </QueryProvider>
       </body>
     </html>
