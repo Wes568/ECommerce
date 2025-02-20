@@ -3,25 +3,21 @@
 import React from "react";
 import { useAllProducts } from "../_hooks/products";
 import Loading from "../_components/loading";
-import { IProduct } from "../product-management/_actions";
-
-export interface IAllProducts extends IProduct {
-  registerUserId: number;
-}
+import ProductCard from "../_components/product-card";
+import { IProducts } from "../_contexts/auth-context";
 
 const Home = () => {
   const { data, isPending } = useAllProducts();
 
-  const produtosArray: IAllProducts[] = data?.products?.produtos ?? [];
-  const categoriaAtual = data?.products?.categoriaAtual ?? "Categoria";
-  console.log(data);
+  const productsArray: IProducts[] = data?.products?.produtos ?? [];
+  const category = data?.products?.categoriaAtual ?? "Categoria";
 
   return (
     <section>
       <div className="bg-primary-foreground p-4 mt-[98px] lg:mt-[134px] lg:p-0">
         <div className="container">
           <div className="flex flex-col items-center py-4 gap-5 justify-between lg:flex-row lg:gap-0">
-            <h1 className="text-xl">{categoriaAtual}</h1>
+            <h1 className="text-xl">{category}</h1>
           </div>
         </div>
       </div>
@@ -29,13 +25,11 @@ const Home = () => {
         {isPending ? (
           <Loading />
         ) : (
-          <ul>
-            {produtosArray.map((product, index) => (
-              <li key={product.produtoId || product.nome || index}>
-                {product.nome}
-              </li>
+          <div className="flex justify-center flex-wrap gap-5 lg:justify-normal">
+            {productsArray.map((item) => (
+              <ProductCard key={item.produtoId} product={item} />
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </section>

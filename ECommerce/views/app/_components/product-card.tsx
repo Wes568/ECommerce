@@ -1,0 +1,70 @@
+import React from "react";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { IProducts, useAuth } from "../_contexts/auth-context";
+import { toast } from "sonner";
+import Link from "next/link";
+
+interface ProductCardProps {
+  product: IProducts;
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
+  const { setProducts } = useAuth();
+
+  const formatToBRL = (value: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
+
+  const addToShoppingCar = (product: IProducts) => {
+    setProducts((prevProducts) => {
+      const updatedProducts = [...prevProducts, product];
+      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      toast.success("Produto adicionado ao carrinho");
+      return updatedProducts;
+    });
+  };
+
+  return (
+    <div className="bg-glass shadow-md flex justify-between flex-col w-72 rounded-sm p-4 transition duration-300 hover:scale-105">
+      <img
+        className="h-64 rounded-sm relative"
+        alt="Imagem do Produto"
+        src={product.imagemUrl ?? ""}
+        width={300}
+      />
+      <div className="flex mt-2 gap-2 flex-col">
+        <div className="flex flex-col">
+          <h2 className="text-sm">{product.nome}</h2>
+        </div>
+        <span className="text-primary text-2xl font-bold">
+          {formatToBRL(product.preco ?? 0)}
+        </span>
+        <div className="flex gap-2 items-center">
+          <Badge className="text-xs bg-muted text-primary">
+            Categoria: {product.categoria.nome}
+          </Badge>
+          <Badge className="text-xs bg-muted text-primary">
+            {product.emEstoque === true ? "Em Estoque" : "Sem Estoque"}
+          </Badge>
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <Button
+          onClick={() => addToShoppingCar(product)}
+          className="mt-5 text-white"
+        >
+          Adicionar ao carrinho
+        </Button>
+        <Button className="bg-muted text-white" asChild>
+          <Link href={`product/${product.produtoId}`}>Comprar agora</Link>
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;

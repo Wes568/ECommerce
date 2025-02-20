@@ -11,11 +11,13 @@ import Link from "next/link";
 import logo from "../../../public/images/logo-temp.jpg";
 import LoginForm from "./_components/login-form";
 import MenuMobile from "./_components/menu-mobile";
+import { useAuth } from "@/app/_contexts/auth-context";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const { auth } = useAuth();
   return (
-    <section className="top-0 fixed w-screen">
+    <section className="top-0 z-10 fixed w-screen">
       <div className="bg-glass backdrop-blur-glass p-4 border-y border-gray-300/20 lg:px-0">
         <div className="container">
           <nav className="flex flex-col justify-between w-100 lg:items-center lg:flex-row">
@@ -46,9 +48,11 @@ const Header = () => {
             <div className="hidden lg:flex lg:items-center lg:gap-10">
               <LoginForm />
               <MenuShoppingCar />
-              <Link href={"/product-management"}>
-                <PackagePlus />
-              </Link>
+              {auth.token && (
+                <Link href={"/product-management"}>
+                  <PackagePlus />
+                </Link>
+              )}
             </div>
           </nav>
         </div>
