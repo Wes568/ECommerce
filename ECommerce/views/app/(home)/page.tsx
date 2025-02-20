@@ -1,14 +1,20 @@
 "use client";
 
 import React from "react";
-import { Loader2 } from "lucide-react";
 import { useAllProducts } from "../_hooks/products";
+import Loading from "../_components/loading";
+import { IProduct } from "../product-management/_actions";
+
+export interface IAllProducts extends IProduct {
+  registerUserId: number;
+}
 
 const Home = () => {
   const { data, isPending } = useAllProducts();
 
-  const produtosArray = data?.products?.produtos ?? [];
+  const produtosArray: IAllProducts[] = data?.products?.produtos ?? [];
   const categoriaAtual = data?.products?.categoriaAtual ?? "Categoria";
+  console.log(data);
 
   return (
     <section>
@@ -21,13 +27,13 @@ const Home = () => {
       </div>
       <div className="container mt-5">
         {isPending ? (
-          <div className="flex items-center mt-20 justify-center">
-            <Loader2 className="h-[50px] w-[50px] animate-spin" />
-          </div>
+          <Loading />
         ) : (
           <ul>
-            {produtosArray.map((product: any, index: number) => (
-              <li key={product.id || product.nome || index}>{product.nome}</li>
+            {produtosArray.map((product, index) => (
+              <li key={product.produtoId || product.nome || index}>
+                {product.nome}
+              </li>
             ))}
           </ul>
         )}
