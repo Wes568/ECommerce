@@ -12,10 +12,10 @@ export const productsCategory = [
 export const tinyInt = [
   {
     name: "Sim",
-    value: 1
+    value: true
   },
   {
     name: "Não",
-    value: 2
+    value: false
   }
 ]
