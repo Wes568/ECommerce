@@ -1,10 +1,12 @@
-﻿using ECommerce.Models;
+﻿using ECommerce.Context;
+using ECommerce.Models;
 using ECommerce.Repositories.Interfaces;
 using ECommerce.Services;
 using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -13,10 +15,12 @@ namespace ECommerce.Controllers
     public class ProdutoController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly AppDbContext _context;
         private readonly IProdutoRepository _ProdutoRepository;
 
-        public ProdutoController(IProdutoRepository ProdutoRepository, UserManager<IdentityUser> userManager)
+        public ProdutoController(IProdutoRepository ProdutoRepository, UserManager<IdentityUser> userManager, AppDbContext context)
         {
+            _context = context;
             _userManager = userManager;
             _ProdutoRepository = ProdutoRepository;
         }
@@ -93,6 +97,80 @@ namespace ECommerce.Controllers
             }
         }
 
+        public IActionResult Delete(int productId)
+        {
+            try
+            {
+                Produto product = _ProdutoRepository.Produtos.FirstOrDefault(l => l.ProdutoId == productId);
+
+                if (product != null)
+                    _context.Produtos.Remove(product);
+
+                _context.SaveChanges();
+
+                return Ok(new
+                {
+                    error = false,
+                    errorMessage = ""
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    error = true,
+                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao excluir produto."
+                });
+            }
+        }
+
+        public IActionResult Update([FromBody] ProdutoViewModel produtoVM)
+        {
+                if (ModelState.IsValid)
+                {
+                    Produto product = new Produto()
+                    {
+                        ProdutoId = produtoVM.ProdutoId,
+                        Nome = produtoVM.Nome,
+                        DescricaoCurta = produtoVM.DescricaoCurta,
+                        DescricaoDetalhada = produtoVM.DescricaoDetalhada,
+                        Preco = produtoVM.Preco,
+                        ImagemUrl = produtoVM.ImagemUrl,
+                        ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl,
+                        IsProdutoPreferido = produtoVM.IsProdutoPreferido,
+                        EmEstoque = produtoVM.EmEstoque,
+                        RegisterUserId = _userManager.GetUserId(User),
+                        CategoriaId = produtoVM.CategoriaId
+                    };
+
+                    if (product != null)
+                        _context.Produtos.Update(product);
+
+                    _context.SaveChanges();
+
+                    return Ok(new
+                    {
+                        product,
+                        error = false,
+                        errorMessage = ""
+
+                    });
+                }
+
+                var errorMessages = ModelState.Values
+                    .SelectMany(state => state.Errors)
+                    .Select(error => error.ErrorMessage)
+                    .ToList();
+
+                    return BadRequest(new
+                    {
+                        error = true,
+                        errorMessage = errorMessages
+                    });  
+        }
+
+        //Produto/Search
         public IActionResult Search(string searchString)
         {
             List<Produto> products;
@@ -143,9 +221,41 @@ namespace ECommerce.Controllers
 
         }
 
+        //Produto/ListProductsByUser
+        public IActionResult ListProductsByUser()
+        {
+            try
+            {
+                List<Produto> products;
+
+                products = _ProdutoRepository.Produtos
+                            .Where(l => l.RegisterUserId == _userManager.GetUserId(User))
+                            .OrderBy(c => c.Nome).ToList();            
+
+                return Ok(new
+                {
+                    products,
+                    error = false,
+                    errorMessage = ""
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    products = "",
+                    error = true,
+                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao listar produtos por categoria."
+                });
+            }
+
+        }
+
         [AllowAnonymous]
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        //Produto/Register
         public IActionResult Register([FromBody] ProdutoViewModel produtoVM)
         {
             if (ModelState.IsValid)

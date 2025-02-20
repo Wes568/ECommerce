@@ -8,17 +8,17 @@ namespace ECommerce.ViewModels
     {
             public int ProdutoId { get; set; }
 
-            [StringLength(80, MinimumLength = 5, ErrorMessage = "O {0} deve ter no mínimo {1} e no máximo {2} caracteres")]
+            [StringLength(80, MinimumLength = 5, ErrorMessage = "O {0} deve ter no mínimo {2} e no máximo {1} caracteres")]
             [Required(ErrorMessage = "Informe o nome do produto")]
             [Display(Name = "Nome do produto")]
             public string Nome { get; set; }
 
-            [StringLength(200, MinimumLength = 20, ErrorMessage = "A {0} deve ter no mínimo {1} e no máximo {2} caracteres")]
+            [StringLength(200, MinimumLength = 20, ErrorMessage = "A {0} deve ter no mínimo {2} e no máximo {1} caracteres")]
             [Required(ErrorMessage = "Informe a descrição do produto")]
             [Display(Name = "Descrição do produto")]
             public string DescricaoCurta { get; set; }
 
-            [StringLength(200, MinimumLength = 20, ErrorMessage = "A {0} deve ter no mínimo {1} e no máximo {2} caracteres")]
+            [StringLength(200, MinimumLength = 20, ErrorMessage = "A {0} deve ter no mínimo {2} e no máximo {1} caracteres")]
             [Required(ErrorMessage = "Informe a descrição detalhada do produto")]
             [Display(Name = "Descrição detalhada do produto")]
             public string DescricaoDetalhada { get; set; }
