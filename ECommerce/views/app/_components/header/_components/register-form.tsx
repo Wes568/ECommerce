@@ -23,8 +23,8 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useRegister } from "../_actions";
 import { useAuth } from "@/app/_contexts/auth-context";
+import { useRegister } from "@/app/_hooks/user";
 
 const formSchema = z.object({
   userName: z

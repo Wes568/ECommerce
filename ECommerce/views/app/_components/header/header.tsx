@@ -20,7 +20,9 @@ const Header = () => {
         <div className="container">
           <nav className="flex flex-col justify-between w-100 lg:items-center lg:flex-row">
             <div className="flex justify-between items-center lg:justify-normal lg:items-start">
-              <Image src={logo} alt="Logo do Ecommerce" width={150}></Image>
+              <Link href={"/"}>
+                <Image src={logo} alt="Logo do Ecommerce" width={150} />
+              </Link>
               {!open ? (
                 <AlignJustify
                   className="lg:hidden"

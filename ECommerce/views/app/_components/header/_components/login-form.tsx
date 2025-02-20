@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import RegisterForm from "./register-form";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { useLogin } from "../_actions";
+import { useLogin } from "@/app/_hooks/user";
 
 const formSchema = z.object({
   userName: z

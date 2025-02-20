@@ -33,9 +33,10 @@ import {
 } from "@/app/_components/ui/select";
 import { MoneyInput } from "@/app/_components/money-input";
 import { Textarea } from "@/app/_components/ui/textarea";
-import { IProduct, useUpsertProduct } from "../_actions";
+import { IProduct } from "../_actions";
 import { Switch } from "@/app/_components/ui/switch";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
+import { useUpsertProduct } from "@/app/_hooks/products";
 
 const validCategoryValues = productsCategory.map((category) => category.value);
 
