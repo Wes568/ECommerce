@@ -65,7 +65,7 @@ const Header = () => {
           open
             ? "opacity-100 translate-y-0  h-screen z-50"
             : "opacity-0 -translate-y-full pointer-events-none h-0  z-[-1]"
-        } flex h-screen md:h-0 bg-glass backdrop-blur-glass z-10 flex-col items-center transition-all duration-300 ease-in-out`}
+        } flex md:h-0 bg-glass backdrop-blur-glass z-10 flex-col items-center transition-all duration-300 ease-in-out`}
       >
         <MenuMobile />
       </div>

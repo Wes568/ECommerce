@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-
 import { Loader2, PlusCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +23,7 @@ import {
   FormMessage,
 } from "@/app/_components/ui/form";
 import { Input } from "@/app/_components/ui/input";
-import { productsCategory, tinyInt } from "../_constants";
+import { productsCategory } from "../_constants";
 import {
   Select,
   SelectContent,
@@ -34,11 +33,11 @@ import {
 } from "@/app/_components/ui/select";
 import { MoneyInput } from "@/app/_components/money-input";
 import { Textarea } from "@/app/_components/ui/textarea";
-import { IProduct } from "../_actions";
+import { IProduct, useUpsertProduct } from "../_actions";
+import { Switch } from "@/app/_components/ui/switch";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 
 const validCategoryValues = productsCategory.map((category) => category.value);
-const tinyIntValues = tinyInt.map((item) => item.value);
 
 const formSchema = z.object({
   nome: z
@@ -58,21 +57,20 @@ const formSchema = z.object({
   preco: z.number({ required_error: "O preço é obrigatório." }).positive({
     message: "O preço deve ser positivo.",
   }),
-  isProdutoPreferido: z
-    .number()
-    .refine((value) => tinyIntValues.includes(value), {
-      message: "Preferência sobre o produto é obrigatória.",
-    }),
-  emEstoque: z.number().refine((value) => tinyIntValues.includes(value), {
-    message: "Informe se o produto contém alguma unidade em estoque.",
+  isProdutoPreferido: z.boolean({
+    required_error: "Preferência sobre o produto é obrigatória.",
+  }),
+  emEstoque: z.boolean({
+    required_error: "Informe se o produto contém alguma unidade em estoque.",
   }),
 });
 
-interface ProductFormProps {
+export interface ProductFormProps {
   product?: IProduct;
 }
 const ProductForm = ({ product }: ProductFormProps) => {
-  const [loading, setLoading] = useState<boolean>(false);
+  const { mutate, isPending } = useUpsertProduct();
+  const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,19 +81,24 @@ const ProductForm = ({ product }: ProductFormProps) => {
       descricaoDetalhada: "",
       imagemUrl: "",
       imagemThumbnailUrl: "",
-      preco: 50,
-      isProdutoPreferido: 0,
-      emEstoque: 0,
+      preco: 0,
+      isProdutoPreferido: false,
+      emEstoque: false,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutate(values, {
+      onSuccess: () => {
+        form.reset(); // Reseta o formulário após o envio
+        setIsOpen(false);
+      },
+    });
   };
 
   return (
     <section className="px-4">
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button className="bg-primary text-white w-full">
             <PlusCircle />
@@ -109,236 +112,7 @@ const ProductForm = ({ product }: ProductFormProps) => {
               Preencha as informações adequeadas do seu novo produto.
             </DialogDescription>
           </DialogHeader>
-          <ScrollArea className="h-[600px] w-full rounded-md border p-4 lg:hidden">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8 px-3"
-              >
-                <FormField
-                  control={form.control}
-                  name="nome"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Digite o nome do produto"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex flex-col gap-5 justify-between lg:flex-row lg:gap-0">
-                  <FormField
-                    control={form.control}
-                    name="categoriaId"
-                    render={({ field }) => (
-                      <FormItem className="w-full lg:w-[150px]">
-                        <FormLabel>Categoria</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={String(field.value)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione a categoria do produto" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {productsCategory.map((item) => (
-                              <SelectItem
-                                key={item.value}
-                                value={String(item.value)}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="isProdutoPreferido"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Preferência do Produto</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={String(field.value)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione a preferência do produto" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {tinyInt.map((item) => (
-                              <SelectItem
-                                key={item.value}
-                                value={String(item.value)}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="emEstoque"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Produto em Estoque</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={String(field.value)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Informe se o produto está em estoque" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {tinyInt.map((item) => (
-                              <SelectItem
-                                key={item.value}
-                                value={String(item.value)}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-5 justify-between lg:flex-row lg:gap-0">
-                  <FormField
-                    control={form.control}
-                    name="imagemUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Imagem</FormLabel>
-                        <FormControl>
-                          <Input
-                            type={"text"}
-                            className="w-full"
-                            placeholder="Informe através de uma URL a imagem do produto."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="imagemThumbnailUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Thumbnail</FormLabel>
-                        <FormControl>
-                          <Input
-                            type={"text"}
-                            className="w-full"
-                            placeholder="Informe através de uma URL a thumbnail do produto."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={form.control}
-                  name="preco"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Valor</FormLabel>
-                      <FormControl>
-                        <MoneyInput
-                          placeholder="Digite o preço"
-                          value={field.value}
-                          onValueChange={({ floatValue }) =>
-                            field.onChange(floatValue)
-                          }
-                          onBlur={field.onBlur}
-                          disabled={field.disabled}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="descricaoCurta"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Descrição (Curta)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type={"text"}
-                          className="w-full"
-                          placeholder="Informe a descrição (curta) do produto."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="descricaoDetalhada"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Descrição (Detalhada)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Informe a descrição (detalhada) do produto."
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {loading ? (
-                  <Button className="text-white" disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Cadastrando
-                  </Button>
-                ) : (
-                  <Button className="text-white" type="submit">
-                    Cadastrar
-                  </Button>
-                )}
-              </form>
-            </Form>
-          </ScrollArea>
-          <div className="hidden lg:block">
+          <ScrollArea className="h-[600px] w-full rounded-md border p-4">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -360,68 +134,51 @@ const ProductForm = ({ product }: ProductFormProps) => {
                     </FormItem>
                   )}
                 />
-                <div className="flex flex-col justify-between lg:flex-row">
-                  <FormField
-                    control={form.control}
-                    name="categoriaId"
-                    render={({ field }) => (
-                      <FormItem className="w-full lg:w-[150px]">
-                        <FormLabel>Categoria</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={String(field.value)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione a categoria do produto" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {productsCategory.map((item) => (
-                              <SelectItem
-                                key={item.value}
-                                value={String(item.value)}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="categoriaId"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Categoria</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        defaultValue={String(field.value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a categoria do produto" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {productsCategory.map((item) => (
+                            <SelectItem
+                              key={item.value}
+                              value={String(item.value)}
+                            >
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex flex-col gap-5 justify-between">
                   <FormField
                     control={form.control}
                     name="isProdutoPreferido"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Preferência do Produto</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={String(field.value)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione a preferência do produto" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {tinyInt.map((item) => (
-                              <SelectItem
-                                key={item.value}
-                                value={String(item.value)}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
+                      <FormItem className="flex items-center justify-between rounded-lg border p-2">
+                        <FormLabel className="text-sm">
+                          Preferência do Produto
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />
@@ -429,31 +186,16 @@ const ProductForm = ({ product }: ProductFormProps) => {
                     control={form.control}
                     name="emEstoque"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Produto em Estoque</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={String(field.value)}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Informe se o produto está em estoque" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {tinyInt.map((item) => (
-                              <SelectItem
-                                key={item.value}
-                                value={String(item.value)}
-                              >
-                                {item.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
+                      <FormItem className="flex items-center justify-between rounded-lg border p-2">
+                        <FormLabel className="text-sm">
+                          Produto em Estoque
+                        </FormLabel>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
                       </FormItem>
                     )}
                   />
@@ -502,7 +244,7 @@ const ProductForm = ({ product }: ProductFormProps) => {
                   name="preco"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Valor</FormLabel>
+                      <FormLabel>Preço</FormLabel>
                       <FormControl>
                         <MoneyInput
                           placeholder="Digite o preço"
@@ -554,7 +296,7 @@ const ProductForm = ({ product }: ProductFormProps) => {
                   )}
                 />
 
-                {loading ? (
+                {isPending ? (
                   <Button className="text-white" disabled>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Cadastrando
@@ -566,7 +308,7 @@ const ProductForm = ({ product }: ProductFormProps) => {
                 )}
               </form>
             </Form>
-          </div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </section>

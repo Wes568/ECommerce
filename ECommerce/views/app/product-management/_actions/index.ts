@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { toast } from "sonner";
 
 
@@ -11,23 +12,28 @@ export interface IProduct {
   imagemUrl: string;
   imagemThumbnailUrl: string;
   preco: number;
-  isProdutoPreferido: number;
-  emEstoque: number;
+  isProdutoPreferido: boolean;
+  emEstoque: boolean;
 }
 
-export const upsertProduct = async (product: IProduct) => {
-  try {
-    let response: AxiosResponse<unknown, unknown> | undefined;
-    if (product.produtoId) {
-      console.log("Alteração do Produto")
-    } else {
-      response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Login`)
-    }
-    return response ? response.data : null;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      toast.error("Não foi possível cadastrar seu produto");
-      console.error("Erro ao cadastrar produto:", error);
-    }
+const upsertProductRequest = async (product: IProduct) => {
+  let response;
+  if (product.produtoId) {
+    response = await axios.put(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/${product.produtoId}`)
+  } else {
+    response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Register`, product)
   }
+  return response.data
+}
+export const useUpsertProduct = () => {
+  return useMutation({
+    mutationFn: upsertProductRequest,
+    onSuccess: () => {
+      toast.success("Produto criado com sucesso!");
+    },
+    onError: (error) => {
+      toast.error("Ocorreu um erro ao criar o produto");
+      console.error("Erro ao logar usuário:", error);
+    }
+  });
 }
