@@ -1,5 +1,6 @@
 ﻿using ECommerce.Context;
 using ECommerce.Models;
+using ECommerce.Repositories;
 using ECommerce.Repositories.Interfaces;
 using ECommerce.Services;
 using ECommerce.ViewModels;
@@ -15,12 +16,10 @@ namespace ECommerce.Controllers
     public class ProdutoController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly AppDbContext _context;
         private readonly IProdutoRepository _ProdutoRepository;
 
-        public ProdutoController(IProdutoRepository ProdutoRepository, UserManager<IdentityUser> userManager, AppDbContext context)
+        public ProdutoController(IProdutoRepository ProdutoRepository, UserManager<IdentityUser> userManager)
         {
-            _context = context;
             _userManager = userManager;
             _ProdutoRepository = ProdutoRepository;
         }
@@ -76,7 +75,7 @@ namespace ECommerce.Controllers
         {
             try
             {
-                var product = _ProdutoRepository.Produtos.FirstOrDefault(l => l.ProdutoId == productId);
+                var product = _ProdutoRepository.GetProdutoById(productId);
 
                 return Ok(new
                 {
@@ -101,12 +100,10 @@ namespace ECommerce.Controllers
         {
             try
             {
-                Produto product = _ProdutoRepository.Produtos.FirstOrDefault(l => l.ProdutoId == productId);
+                Produto product = _ProdutoRepository.GetProdutoById(productId);
 
                 if (product != null)
-                    _context.Produtos.Remove(product);
-
-                _context.SaveChanges();
+                    _ProdutoRepository.Delete(product);
 
                 return Ok(new
                 {
@@ -145,11 +142,9 @@ namespace ECommerce.Controllers
                     };
 
                     if (product != null)
-                        _context.Produtos.Update(product);
+                        _ProdutoRepository.Update(product);
 
-                    _context.SaveChanges();
-
-                    return Ok(new
+                return Ok(new
                     {
                         product,
                         error = false,
@@ -246,7 +241,7 @@ namespace ECommerce.Controllers
                 {
                     products = "",
                     error = true,
-                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao listar produtos por categoria."
+                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao listar produtos por usuário."
                 });
             }
 
@@ -271,7 +266,7 @@ namespace ECommerce.Controllers
                     ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl,
                     IsProdutoPreferido = produtoVM.IsProdutoPreferido,
                     EmEstoque = produtoVM.EmEstoque,
-                    RegisterUserId = _userManager.GetUserId(User),
+                    RegisterUserId = produtoVM.RegisterUserId,
                     CategoriaId = produtoVM.CategoriaId
                 };
 

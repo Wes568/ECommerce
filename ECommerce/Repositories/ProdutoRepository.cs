@@ -17,14 +17,26 @@ namespace ECommerce.Repositories
         public IEnumerable<Produto> ProdutosPreferidos => _context.Produtos.Where(c => c.IsProdutoPreferido).Include(c => c.Categoria);
 
 
-        public Produto GetProdutoById(int ProdutoId)
+        public Produto GetProdutoById(int produtoId)
         {
-            return _context.Produtos.FirstOrDefault(l => l.ProdutoId == ProdutoId);
+            return _context.Produtos.FirstOrDefault(l => l.ProdutoId == produtoId);
         }
 
         public void Register(Produto pedido)
         {
             _context.Produtos.Add(pedido);
+            _context.SaveChanges();
+        }
+
+        public void Delete(Produto produto)
+        {
+            _context.Produtos.Remove(produto);
+            _context.SaveChanges();
+        }
+
+        public void Update(Produto produto)
+        {
+            _context.Produtos.Add(produto);
             _context.SaveChanges();
         }
     }
