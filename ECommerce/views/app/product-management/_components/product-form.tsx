@@ -33,9 +33,10 @@ import {
 } from "@/app/_components/ui/select";
 import { MoneyInput } from "@/app/_components/money-input";
 import { Textarea } from "@/app/_components/ui/textarea";
-import { IProduct, useUpsertProduct } from "../_actions";
+import { IProduct } from "../_actions";
 import { Switch } from "@/app/_components/ui/switch";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
+import { useUpsertProduct } from "@/app/_hooks/products";
 
 const validCategoryValues = productsCategory.map((category) => category.value);
 
@@ -54,9 +55,7 @@ const formSchema = z.object({
   }),
   imagemUrl: z.string(),
   imagemThumbnailUrl: z.string(),
-  preco: z.number({ required_error: "O preço é obrigatório." }).positive({
-    message: "O preço deve ser positivo.",
-  }),
+  preco: z.number({ required_error: "O preço é obrigatório." }),
   isProdutoPreferido: z.boolean({
     required_error: "Preferência sobre o produto é obrigatória.",
   }),

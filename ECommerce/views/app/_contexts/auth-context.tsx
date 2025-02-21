@@ -2,17 +2,25 @@
 
 import React, { createContext, useState, useContext, useEffect } from "react";
 
-interface IProducts {
+export interface IProducts {
   produtoId: number | null;
   nome: string | null;
   descricaoCurta: string | null;
-  descricaodDetalhada: string | null;
+  descricaoDetalhada: string | null;
   preco: number | null;
-  imagemuUrl: string | null;
+  imagemUrl: string | null;
   imagemThumbnailUrl: string | null;
-  isProdutopPreferido: boolean | null;
+  isProdutoPreferido: boolean | null;
   emEstoque: boolean | null;
   categoriaId: string | null;
+  registerUserId: number | null;
+  categoria: ICategory;
+}
+
+interface ICategory {
+  categoriaId: number;
+  nome: string;
+  descricao: string;
 }
 
 export interface IAuth {
@@ -23,8 +31,8 @@ export interface IAuth {
 interface AuthContextType {
   auth: IAuth;
   setAuth: React.Dispatch<React.SetStateAction<IAuth>>;
-  products: IProducts;
-  setProducts: React.Dispatch<React.SetStateAction<IProducts>>;
+  products: IProducts[];
+  setProducts: React.Dispatch<React.SetStateAction<IProducts[]>>;
 }
 
 interface IChildren {
@@ -39,27 +47,20 @@ export const AuthProvider = ({ children }: IChildren) => {
     token: null,
   });
 
-  const [products, setProducts] = useState<IProducts>({
-    produtoId: null,
-    nome: null,
-    descricaoCurta: null,
-    descricaodDetalhada: null,
-    preco: null,
-    imagemuUrl: null,
-    imagemThumbnailUrl: null,
-    isProdutopPreferido: null,
-    emEstoque: null,
-    categoriaId: null,
-  });
+  const [products, setProducts] = useState<IProducts[]>([]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
+    const storedProducts = localStorage.getItem("products");
     if (storedToken && storedUsername) {
       setAuth({
         username: storedUsername,
         token: storedToken,
       });
+    }
+    if (storedProducts) {
+      setProducts(JSON.parse(storedProducts));
     }
   }, []);
 

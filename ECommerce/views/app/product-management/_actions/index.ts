@@ -1,7 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { toast } from "sonner";
+"use server"
 
+import api from "@/app";
 
 export interface IProduct {
   produtoId?: number;
@@ -16,24 +15,17 @@ export interface IProduct {
   emEstoque: boolean;
 }
 
-const upsertProductRequest = async (product: IProduct) => {
+export const upsertProductRequest = async (product: IProduct) => {
   let response;
   if (product.produtoId) {
-    response = await axios.put(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/${product.produtoId}`)
+    response = await api.put(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Update/`, product)
   } else {
-    response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Register`, product)
+    response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Register`, product)
   }
   return response.data
 }
-export const useUpsertProduct = () => {
-  return useMutation({
-    mutationFn: upsertProductRequest,
-    onSuccess: () => {
-      toast.success("Produto criado com sucesso!");
-    },
-    onError: (error) => {
-      toast.error("Ocorreu um erro ao criar o produto");
-      console.error("Erro ao logar usuário:", error);
-    }
-  });
+
+export const getProductsByUser = async () => {
+  const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/ListProductsByUser/`)
+  return response.data
 }

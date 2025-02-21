@@ -1,5 +1,3 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
 
 First, run the development server:
@@ -14,23 +12,44 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Organização de pastas da interface
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `app`: Pasta geral da aplicação.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  - `_components`: Pasta com componentes reutilizáveis.
 
-## Learn More
+    - `header`: Componente do cabeçalho da aplicação.
+      - `_actions`: Todas as funções que fazem requisição para API.
+      - `_components`: Componentes do cabeçalho.
+      - `_constants`: Constantes do cabeçalho, por exemplo listas de opções.
+    - `ui`: Pasta onde fica armazenado todos os UI do shadcn.
 
-To learn more about Next.js, take a look at the following resources:
+  - `_context`: Pasta com os react context da aplicação.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  - `_hooks`: Pasta com os hooks da aplicação.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    - `products`: Contém a função com React Query em relação a actions do produto.
+    - `user`: Contém a função com React Query em relação a actions do usuário.
 
-## Deploy on Vercel
+  - `_lib`: Útilitário do shadcn.
+  - `providers`: Contém os providers da aplicação.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  - `(home)`: Componente da página home da aplicação.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    - `_actions`: Todas as funções que fazem requisição para API.
+
+  - `product-management`: Componente da página de cadastro de produtos da aplicação.
+
+    - `_actions`: Todas as funções que fazem requisição para API.
+    - `_components`: Componentes do cadastro de produtos.
+    - `_constants`: Constantes do cadastro de produtos, por exemplo listas de opções.
+
+  - `public`: Pasta onde costuma ser armazenado as imagens da aplicação.
+
+## React Query
+
+Neste projeto estamos utilizando uma nova tecnologia do React, o React Query e aqui vou te ajudar a entender como funciona:
+
+- **useQuery**: É uma função que você pode usar para fazer requisições de GET para API, utilizando sempre queryKey: [`NOME DA FUNÇÃO`] para criação de uma chave sendo assim toda hora que fizemos um POST, PUT ou DELETE o GET vai se atualizar sozinho e por final queryFn onde é armazenado a nossa função de GET.
+
+- **useMutation**: É uma função que você pode usar para fazer requisições de POST, PUT ou DELETE para API, utilizando o mutationFn para armazenar nossa função HTTP, onSucess para realizar uma ação toda vez que for bem-sucedido a nossa requisição com isso nós sempre optamos por atualizar a lista de GET com qqueryClient.invalidateQueries({ queryKey: [`NOME DA FUNÇÃO`] }) e onError para tratamentos de erros.

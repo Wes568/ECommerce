@@ -11,15 +11,17 @@ import {
 } from "./ui/sheet";
 import { ShoppingCartIcon } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useAuth } from "../_contexts/auth-context";
 
 const MenuShoppingCar = () => {
+  const { products } = useAuth();
   return (
     <div className="flex items-center">
       <Sheet>
         <SheetTrigger>
           <ShoppingCartIcon className="relative" size={25} />
           <Badge className="absolute text-xs top-[95px] lg:top-1/4 text-white">
-            0
+            {products.length}
           </Badge>
         </SheetTrigger>
         <SheetContent>
