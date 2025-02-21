@@ -59,7 +59,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         >
           Adicionar ao carrinho
         </Button>
-        <Button className="bg-muted text-white" asChild>
+        <Button className="bg-foreground text-white" asChild>
           <Link href={`product/${product.produtoId}`}>Comprar agora</Link>
         </Button>
       </div>

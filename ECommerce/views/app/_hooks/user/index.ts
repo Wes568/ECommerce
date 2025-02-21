@@ -10,9 +10,10 @@ export const useLogin = (setAuth: (auth: any) => void) => {
   return useMutation({
     mutationFn: loginRequest,
     onSuccess: (data) => {
-      setAuth({ username: data.user.userName, token: data.token });
+      setAuth({ username: data.user.userName, token: data.token, userId: data.user.id });
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.user.userName);
+      localStorage.setItem("userId", data.user.id);
       toast.success(`Bem-vindo, ${data.user.userName}`);
     },
     onError: (error: AxiosError<any>) => {

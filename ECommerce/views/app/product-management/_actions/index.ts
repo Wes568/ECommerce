@@ -3,7 +3,7 @@
 import api from "@/app";
 
 export interface IProduct {
-  produtoId?: number;
+  produtoId?: string;
   nome: string;
   categoriaId: number;
   descricaoCurta: string;
@@ -13,7 +13,9 @@ export interface IProduct {
   preco: number;
   isProdutoPreferido: boolean;
   emEstoque: boolean;
+  registerUserId: string | null;
 }
+
 
 export const upsertProductRequest = async (product: IProduct) => {
   let response;
@@ -25,7 +27,7 @@ export const upsertProductRequest = async (product: IProduct) => {
   return response.data
 }
 
-export const getProductsByUser = async () => {
-  const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/ListProductsByUser/`)
+export const getProductsByUser = async (userId: string | null) => {
+  const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/ListProductsByUser/${userId}`)
   return response.data
 }

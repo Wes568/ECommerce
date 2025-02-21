@@ -3,7 +3,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 
 export interface IProducts {
-  produtoId: number | null;
+  produtoId: string | null;
   nome: string | null;
   descricaoCurta: string | null;
   descricaoDetalhada: string | null;
@@ -13,7 +13,7 @@ export interface IProducts {
   isProdutoPreferido: boolean | null;
   emEstoque: boolean | null;
   categoriaId: string | null;
-  registerUserId: number | null;
+  registerUserId: string | null;
   categoria: ICategory;
 }
 
@@ -24,6 +24,7 @@ interface ICategory {
 }
 
 export interface IAuth {
+  id: string | null;
   username?: string | null;
   token: string | null;
 }
@@ -43,6 +44,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: IChildren) => {
   const [auth, setAuth] = useState<IAuth>({
+    id: null,
     username: null,
     token: null,
   });
@@ -53,12 +55,15 @@ export const AuthProvider = ({ children }: IChildren) => {
     const storedToken = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
     const storedProducts = localStorage.getItem("products");
-    if (storedToken && storedUsername) {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedToken && storedUsername && storedUserId) {
       setAuth({
+        id: storedUserId,
         username: storedUsername,
-        token: storedToken,
+        token: storedUsername,
       });
     }
+
     if (storedProducts) {
       setProducts(JSON.parse(storedProducts));
     }

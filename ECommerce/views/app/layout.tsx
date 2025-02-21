@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${mulish.className} antialiased dark`}>
+      <body className={`${mulish.className} antialiased light`}>
         <QueryProvider>
           <Toaster />
           <AuthProvider>

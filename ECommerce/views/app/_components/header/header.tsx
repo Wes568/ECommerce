@@ -60,7 +60,11 @@ const Header = () => {
       <div className="hidden lg:flex lg:bg-primary">
         <div className="flex container p-2 justify-between items-center">
           {submenu.map((item) => (
-            <Link className="text-sm" key={item.name} href={item.path}>
+            <Link
+              className="text-sm text-white"
+              key={item.name}
+              href={item.path}
+            >
               {item.name}
             </Link>
           ))}

@@ -65,7 +65,9 @@ const RegisterForm = () => {
     <section>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="bg-muted text-white w-full">Cadastre-se</Button>
+          <Button className="bg-foreground text-white w-full">
+            Cadastre-se
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>

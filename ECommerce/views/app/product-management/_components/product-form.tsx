@@ -37,6 +37,7 @@ import { IProduct } from "../_actions";
 import { Switch } from "@/app/_components/ui/switch";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { useUpsertProduct } from "@/app/_hooks/products";
+import { useAuth } from "@/app/_contexts/auth-context";
 
 const validCategoryValues = productsCategory.map((category) => category.value);
 
@@ -70,6 +71,7 @@ export interface ProductFormProps {
 const ProductForm = ({ product }: ProductFormProps) => {
   const { mutate, isPending } = useUpsertProduct();
   const [isOpen, setIsOpen] = useState(false);
+  const { auth } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,7 +89,11 @@ const ProductForm = ({ product }: ProductFormProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values, {
+    const product: IProduct = {
+      ...values,
+      registerUserId: auth.id,
+    };
+    mutate(product, {
       onSuccess: () => {
         form.reset(); // Reseta o formulário após o envio
         setIsOpen(false);

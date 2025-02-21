@@ -58,14 +58,14 @@ const LoginForm = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    setAuth({ username: null, token: null });
+    setAuth({ username: null, token: null, id: null });
   };
 
   return (
     <div>
-      <Menubar>
+      <Menubar className="bg-primary">
         <MenubarMenu>
-          <MenubarTrigger className="gap-2">
+          <MenubarTrigger className="gap-2 bg-primary text-white">
             <CircleUserRound size={30} />
             {!auth.token ? (
               <div className="flex flex-col">
