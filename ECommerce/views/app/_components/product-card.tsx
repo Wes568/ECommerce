@@ -1,31 +1,21 @@
 import React from "react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { IProducts, useAuth } from "../_contexts/auth-context";
-import { toast } from "sonner";
 import Link from "next/link";
+import ProductForm from "../product-management/_components/product-form";
+import { IProducts } from "../product-management/_actions";
+import { Trash } from "lucide-react";
 
 interface ProductCardProps {
   product: IProducts;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { setProducts } = useAuth();
-
   const formatToBRL = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-
-  const addToShoppingCar = (product: IProducts) => {
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts, product];
-      localStorage.setItem("products", JSON.stringify(updatedProducts));
-      toast.success("Produto adicionado ao carrinho");
-      return updatedProducts;
-    });
   };
 
   return (
@@ -38,14 +28,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
       />
       <div className="flex mt-2 gap-2 flex-col">
         <div className="flex flex-col">
-          <h2 className="text-sm">{product.nome}</h2>
+          <div className="flex gap-2 justify-between items-center">
+            <h2 className="text-sm">{product.nome}</h2>
+            <div className="flex gap-2">
+              <ProductForm product={product} edit={true} />
+              <Trash size={16} className="text-primary cursor-pointer" />
+            </div>
+          </div>
         </div>
         <span className="text-primary text-2xl font-bold">
           {formatToBRL(product.preco ?? 0)}
         </span>
         <div className="flex gap-2 items-center">
           <Badge className="text-xs bg-muted text-primary">
-            Categoria: {product.categoria.nome}
+            Categoria: {product.categoria?.nome}
           </Badge>
           <Badge className="text-xs bg-muted text-primary">
             {product.emEstoque === true ? "Em Estoque" : "Sem Estoque"}
@@ -53,12 +49,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Button
-          onClick={() => addToShoppingCar(product)}
-          className="mt-5 text-white"
-        >
-          Adicionar ao carrinho
-        </Button>
+        <Button className="mt-5 text-white">Adicionar ao carrinho</Button>
         <Button className="bg-foreground text-white" asChild>
           <Link href={`product/${product.produtoId}`}>Comprar agora</Link>
         </Button>

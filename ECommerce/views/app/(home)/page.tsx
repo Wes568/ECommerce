@@ -14,7 +14,7 @@ const Home = () => {
 
   return (
     <section>
-      <div className="bg-primary-foreground p-4 mt-[98px] lg:mt-[134px] lg:p-0">
+      <div className="bg-foreground text-white p-4 mt-[98px] lg:mt-[134px] lg:p-0">
         <div className="container">
           <div className="flex flex-col items-center py-4 gap-5 justify-between lg:flex-row lg:gap-0">
             <h1 className="text-xl">{category}</h1>

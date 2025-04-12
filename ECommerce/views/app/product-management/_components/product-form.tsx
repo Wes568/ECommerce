@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, PlusCircle } from "lucide-react";
+import { Loader2, PencilIcon, PlusCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,7 +33,7 @@ import {
 } from "@/app/_components/ui/select";
 import { MoneyInput } from "@/app/_components/money-input";
 import { Textarea } from "@/app/_components/ui/textarea";
-import { IProduct } from "../_actions";
+import { IProduct, IProducts } from "../_actions";
 import { Switch } from "@/app/_components/ui/switch";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { useUpsertProduct } from "@/app/_hooks/products";
@@ -66,9 +66,10 @@ const formSchema = z.object({
 });
 
 export interface ProductFormProps {
-  product?: IProduct;
+  product?: IProducts;
+  edit?: boolean;
 }
-const ProductForm = ({ product }: ProductFormProps) => {
+const ProductForm = ({ product, edit }: ProductFormProps) => {
   const { mutate, isPending } = useUpsertProduct();
   const [isOpen, setIsOpen] = useState(false);
   const { auth } = useAuth();
@@ -104,15 +105,24 @@ const ProductForm = ({ product }: ProductFormProps) => {
   return (
     <section className="px-4">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button className="bg-primary text-white w-full">
-            <PlusCircle />
-            Adicionar Produto
-          </Button>
-        </DialogTrigger>
+        {product?.registerUserId === auth.id && edit && (
+          <DialogTrigger asChild>
+            <PencilIcon size={16} className="text-primary cursor-pointer" />
+          </DialogTrigger>
+        )}
+        {!edit && (
+          <DialogTrigger asChild>
+            <Button className="bg-primary text-white w-full">
+              <PlusCircle />
+              Adicionar Produto
+            </Button>
+          </DialogTrigger>
+        )}
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Adicione o seu Produto</DialogTitle>
+            <DialogTitle>
+              {product ? "Edite" : "Adicione"} o seu Produto
+            </DialogTitle>
             <DialogDescription>
               Preencha as informações adequeadas do seu novo produto.
             </DialogDescription>

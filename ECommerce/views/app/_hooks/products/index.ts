@@ -40,3 +40,6 @@ export const useUpsertProduct = () => {
   });
 }
 
+//No useMutation, o React Query não executa automaticamente, então os parâmetros vêm de mutate(data).
+//No useQuery, o React Query executa automaticamente, então precisa que os parâmetros sejam passados via queryKey, garantindo reatividade e controle de cache.
+

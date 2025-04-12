@@ -16,6 +16,27 @@ export interface IProduct {
   registerUserId: string | null;
 }
 
+export interface IProducts {
+  produtoId?: string
+  nome: string
+  descricaoCurta: string
+  descricaoDetalhada: string
+  preco: number
+  imagemUrl: string
+  imagemThumbnailUrl: string
+  isProdutoPreferido: boolean
+  emEstoque: boolean
+  categoriaId: number
+  registerUserId: string
+  categoria?: ICategory;
+}
+
+interface ICategory {
+  categoriaId: number;
+  nome: string;
+  descricao: string;
+}
+
 
 export const upsertProductRequest = async (product: IProduct) => {
   let response;
