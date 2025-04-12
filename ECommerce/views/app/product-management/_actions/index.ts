@@ -1,6 +1,7 @@
 "use server"
 
-import api from "@/app";
+import api from "@/app/index";
+import { revalidatePath } from "next/cache";
 
 export interface IProduct {
   produtoId?: string;
@@ -13,7 +14,7 @@ export interface IProduct {
   preco: number;
   isProdutoPreferido: boolean;
   emEstoque: boolean;
-  registerUserId: string | null;
+  registerUserId?: string | null;
 }
 
 export interface IProducts {
@@ -45,10 +46,15 @@ export const upsertProductRequest = async (product: IProduct) => {
   } else {
     response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/Register`, product)
   }
+  revalidatePath("/product-management")
   return response.data
 }
 
 export const getProductsByUser = async (userId: string | null) => {
-  const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/Produto/ListProductsByUser/${userId}`)
-  return response.data
+  try {
+    const response = await api.get(`/Produto/ListProductsByUser/${userId}`)
+    return response.data
+  } catch (error) {
+    console.error(error)
+  }
 }

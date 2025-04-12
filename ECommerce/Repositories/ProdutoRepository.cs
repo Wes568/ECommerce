@@ -36,7 +36,7 @@ namespace ECommerce.Repositories
 
         public void Update(Produto produto)
         {
-            _context.Produtos.Add(produto);
+            _context.Produtos.Update(produto);
             _context.SaveChanges();
         }
     }

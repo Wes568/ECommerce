@@ -19,6 +19,7 @@ export const useGetProductsByUser = (userId: string | null) => {
   return useQuery({
     queryKey: ["getProductsByUser", userId],
     queryFn: () => getProductsByUser(userId),
+    enabled: userId !== null && userId !== undefined,
   });
 };
 
@@ -27,9 +28,8 @@ export const useUpsertProduct = () => {
   const { auth } = useAuth();
   return useMutation({
     mutationFn: upsertProductRequest,
-    onSuccess: (data) => {
-      toast.success("Produto criado com sucesso!");
-      console.log(data)
+    onSuccess: () => {
+      toast.success("Produto criado/alterado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["getProductsByUser", auth.id] });
     },
     onError: (error: AxiosError<any>) => {

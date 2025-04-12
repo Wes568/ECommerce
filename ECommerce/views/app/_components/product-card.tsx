@@ -5,12 +5,16 @@ import Link from "next/link";
 import ProductForm from "../product-management/_components/product-form";
 import { IProducts } from "../product-management/_actions";
 import { Trash } from "lucide-react";
+import { useAuth } from "../_contexts/auth-context";
+import { usePathname } from "next/navigation";
 
 interface ProductCardProps {
   product: IProducts;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { auth } = useAuth();
+  const pathname = usePathname();
   const formatToBRL = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -30,10 +34,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="flex flex-col">
           <div className="flex gap-2 justify-between items-center">
             <h2 className="text-sm">{product.nome}</h2>
-            <div className="flex gap-2">
-              <ProductForm product={product} edit={true} />
-              <Trash size={16} className="text-primary cursor-pointer" />
-            </div>
+            {auth.id === product.registerUserId &&
+              pathname === "/product-management" && (
+                <div className="flex gap-2">
+                  <ProductForm product={product} edit={true} />
+                  <Trash size={16} className="text-primary cursor-pointer" />
+                </div>
+              )}
           </div>
         </div>
         <span className="text-primary text-2xl font-bold">

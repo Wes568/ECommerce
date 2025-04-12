@@ -137,7 +137,7 @@ namespace ECommerce.Controllers
                         ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl,
                         IsProdutoPreferido = produtoVM.IsProdutoPreferido,
                         EmEstoque = produtoVM.EmEstoque,
-                        RegisterUserId = _userManager.GetUserId(User),
+                        RegisterUserId = produtoVM.RegisterUserId,
                         CategoriaId = produtoVM.CategoriaId
                     };
 

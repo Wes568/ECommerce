@@ -90,11 +90,20 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const product: IProduct = {
-      ...values,
-      registerUserId: auth.id,
-    };
-    mutate(product, {
+    let productUpsert: IProduct;
+    if (product?.produtoId) {
+      productUpsert = {
+        ...values,
+        produtoId: product.produtoId,
+        registerUserId: auth.id,
+      };
+    } else {
+      productUpsert = {
+        ...values,
+        registerUserId: auth.id,
+      };
+    }
+    mutate(productUpsert, {
       onSuccess: () => {
         form.reset(); // Reseta o formulário após o envio
         setIsOpen(false);
