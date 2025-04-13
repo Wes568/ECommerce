@@ -7,6 +7,7 @@ using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.IdentityModel.Tokens.Jwt;
@@ -124,46 +125,51 @@ namespace ECommerce.Controllers
 
         public IActionResult Update([FromBody] ProdutoViewModel produtoVM)
         {
-                if (ModelState.IsValid)
-                {
-                    Produto product = new Produto()
-                    {
-                        ProdutoId = produtoVM.ProdutoId,
-                        Nome = produtoVM.Nome,
-                        DescricaoCurta = produtoVM.DescricaoCurta,
-                        DescricaoDetalhada = produtoVM.DescricaoDetalhada,
-                        Preco = produtoVM.Preco,
-                        ImagemUrl = produtoVM.ImagemUrl,
-                        ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl,
-                        IsProdutoPreferido = produtoVM.IsProdutoPreferido,
-                        EmEstoque = produtoVM.EmEstoque,
-                        RegisterUserId = produtoVM.RegisterUserId,
-                        CategoriaId = produtoVM.CategoriaId
-                    };
 
-                    if (product != null)
-                        _ProdutoRepository.Update(product);
+            var product = _ProdutoRepository.GetProdutoById(produtoVM.ProdutoId);
+
+            if (product == null)
+                return BadRequest(new { error = true, errorMessage = "Produto Indisponível" });
+
+
+            if (ModelState.IsValid)
+            {
+                product.Nome = produtoVM.Nome;
+                product.DescricaoCurta = produtoVM.DescricaoCurta;
+                product.DescricaoDetalhada = produtoVM.DescricaoDetalhada;
+                product.Preco = produtoVM.Preco;
+                product.ImagemUrl = produtoVM.ImagemUrl;
+                product.ImagemThumbnailUrl = produtoVM.ImagemThumbnailUrl;
+                product.IsProdutoPreferido = produtoVM.IsProdutoPreferido;
+                product.EmEstoque = produtoVM.EmEstoque;
+                product.DataAtualizacao = DateTime.Now;
+                product.CategoriaId = produtoVM.CategoriaId;
+
+                if (product != null)
+                    _ProdutoRepository.Update(product);
 
                 return Ok(new
-                    {
-                        product,
-                        error = false,
-                        errorMessage = ""
+                {
+                    product,
+                    error = false,
+                    errorMessage = ""
 
-                    });
-                }
+                });
+            }
 
-                var errorMessages = ModelState.Values
-                    .SelectMany(state => state.Errors)
-                    .Select(error => error.ErrorMessage)
-                    .ToList();
+            var errorMessages = ModelState.Values
+                .SelectMany(state => state.Errors)
+                .Select(error => error.ErrorMessage)
+                .ToList();
 
-                    return BadRequest(new
-                    {
-                        error = true,
-                        errorMessage = errorMessages
-                    });  
+            return BadRequest(new
+            {
+                error = true,
+                errorMessage = errorMessages
+            });
         }
+
+
 
         //Produto/Search
         public IActionResult Search(string searchString)
@@ -267,6 +273,8 @@ namespace ECommerce.Controllers
                     IsProdutoPreferido = produtoVM.IsProdutoPreferido,
                     EmEstoque = produtoVM.EmEstoque,
                     RegisterUserId = produtoVM.RegisterUserId,
+                    DataRegistro = DateTime.Now,
+                    DataAtualizacao = DateTime.Now,
                     CategoriaId = produtoVM.CategoriaId
                 };
 
