@@ -1,16 +1,32 @@
 "use client";
 
-import React from "react";
-import { useAllProducts } from "../_hooks/products";
+import React, { useEffect, useState } from "react";
 import Loading from "../_components/loading";
 import ProductCard from "../_components/product-card";
-import { IProducts } from "../_contexts/auth-context";
+import { IProduct } from "../product-management/_actions";
+import { allProductsRequest } from "./_actions";
+import { toast } from "sonner";
 
 const Home = () => {
-  const { data, isPending } = useAllProducts();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<IProduct[]>([]);
+  const [category, setCategory] = useState<string>();
 
-  const productsArray: IProducts[] = data?.products?.produtos ?? [];
-  const category = data?.products?.categoriaAtual ?? "Categoria";
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await allProductsRequest()
+        setCategory(data.products.categoriaAtual)
+        setData(data.products.produtos);
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+        toast.error("Ocorreu um erro ao buscar os produtos");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts()
+  }, []);
 
   return (
     <section>
@@ -22,11 +38,11 @@ const Home = () => {
         </div>
       </div>
       <div className="container mt-5">
-        {isPending ? (
+        {loading ? (
           <Loading />
         ) : (
           <div className="flex justify-center flex-wrap gap-5 lg:justify-normal">
-            {productsArray.map((item) => (
+            {data.map((item) => (
               <ProductCard key={item.produtoId} product={item} />
             ))}
           </div>

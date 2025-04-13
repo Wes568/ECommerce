@@ -44,22 +44,26 @@ namespace ECommerce.Controllers
                     //if (!await _userManager.IsEmailConfirmedAsync(user))
                     //   return BadRequest(new { error = true, errorMessage = "O e-mail não foi confirmado." });
 
-                    var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
+                    var token = _tokenService.GenerateToken(user);
 
-                    if (result.Succeeded)
+                    if (token != null)
                     {
-                        var token = _tokenService.GenerateToken(user);
+                        var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, false, false);
 
-                        return Ok(new
+                        if (result.Succeeded && token != null)
                         {
-                            user = user,
-                            token = new JwtSecurityTokenHandler().WriteToken(token),
-                            expiration = token.ValidTo,
-                            error = false,
-                            errorMessage = ""
 
-                        });
+                            return Ok(new
+                            {
+                                user = user,
+                                token = new JwtSecurityTokenHandler().WriteToken(token),
+                                expiration = token.ValidTo,
+                                error = false,
+                                errorMessage = ""
 
+                            });
+
+                        }
                     }
                 }
             }
@@ -91,22 +95,25 @@ namespace ECommerce.Controllers
                     UserName = registroVM.UserName,
                     Email = registroVM.Email
                 };
+                
+                var token = _tokenService.GenerateToken(user);
 
-                var result = await _userManager.CreateAsync(user, registroVM.Password);
-
-                if (result.Succeeded)
+                if (token != null)
                 {
-                    var token = _tokenService.GenerateToken(user);
+                    var result = await _userManager.CreateAsync(user, registroVM.Password);
 
-                    return Ok(new
+                    if (result.Succeeded)
                     {
-                        user = user,
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo,
-                        error = false,
-                        errorMessage = ""
+                        return Ok(new
+                        {
+                            user = user,
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo,
+                            error = false,
+                            errorMessage = ""
 
-                    });
+                        });
+                    }
                 }
             }
 

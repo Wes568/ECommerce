@@ -217,14 +217,14 @@ namespace ECommerce.Controllers
         }
 
         //Produto/ListProductsByUser
-        public IActionResult ListProductsByUser()
+        public IActionResult ListProductsByUser(string userId)
         {
             try
             {
                 List<Produto> products;
 
                 products = _ProdutoRepository.Produtos
-                            .Where(l => l.RegisterUserId == _userManager.GetUserId(User))
+                            .Where(l => l.RegisterUserId == userId)
                             .OrderBy(c => c.Nome).ToList();            
 
                 return Ok(new

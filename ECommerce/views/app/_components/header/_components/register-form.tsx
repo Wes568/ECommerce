@@ -24,7 +24,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { useRegister } from "@/app/_hooks/user";
+import { registerRequest } from "../_actions";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   userName: z
@@ -45,8 +46,8 @@ const formSchema = z.object({
 
 const RegisterForm = () => {
   const [view, setView] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { setAuth } = useAuth();
-  const { mutate, isPending } = useRegister(setAuth);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,7 +59,18 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    mutate(values);
+    try {
+      setLoading(true);
+      const data = await registerRequest(values)
+      setAuth({ username: data.user.userName, token: data.token, id: data.user.id });
+      localStorage.setItem("token", data.token);
+      toast.success(`Bem-vindo, ${data.user.userName}`);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error)
+      toast.error("Ocorreu um erro ao registrar o usuário");
+    }
   };
 
   return (
@@ -137,7 +149,7 @@ const RegisterForm = () => {
                   </FormItem>
                 )}
               />
-              {isPending ? (
+              {loading ? (
                 <Button className="text-white" disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Cadastrando

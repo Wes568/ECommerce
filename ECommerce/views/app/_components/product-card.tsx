@@ -3,13 +3,13 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import ProductForm from "../product-management/_components/product-form";
-import { IProducts } from "../product-management/_actions";
 import { Trash } from "lucide-react";
 import { useAuth } from "../_contexts/auth-context";
 import { usePathname } from "next/navigation";
+import { IProduct } from "../product-management/_actions";
 
 interface ProductCardProps {
-  product: IProducts;
+  product: IProduct;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {

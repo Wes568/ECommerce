@@ -33,11 +33,12 @@ import {
 } from "@/app/_components/ui/select";
 import { MoneyInput } from "@/app/_components/money-input";
 import { Textarea } from "@/app/_components/ui/textarea";
-import { IProduct, IProducts } from "../_actions";
+import { IProduct, upsertProductRequest } from "../_actions";
 import { Switch } from "@/app/_components/ui/switch";
 import { ScrollArea } from "@/app/_components/ui/scroll-area";
-import { useUpsertProduct } from "@/app/_hooks/products";
 import { useAuth } from "@/app/_contexts/auth-context";
+import { toast } from "sonner";
+import { useProductUser } from "@/app/_contexts/product-user";
 
 const validCategoryValues = productsCategory.map((category) => category.value);
 
@@ -66,13 +67,15 @@ const formSchema = z.object({
 });
 
 export interface ProductFormProps {
-  product?: IProducts;
+  product?: IProduct;
   edit?: boolean;
 }
 const ProductForm = ({ product, edit }: ProductFormProps) => {
-  const { mutate, isPending } = useUpsertProduct();
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
+  const {addProduct} = useProductUser();
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,26 +92,35 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     let productUpsert: IProduct;
-    if (product?.produtoId) {
-      productUpsert = {
-        ...values,
-        produtoId: product.produtoId,
-        registerUserId: auth.id,
-      };
-    } else {
-      productUpsert = {
-        ...values,
-        registerUserId: auth.id,
-      };
+    try {
+      setLoading(true)
+      if (product?.produtoId) {
+        productUpsert = {
+          ...values,
+          produtoId: product.produtoId,
+          registerUserId: auth.id,
+        };
+        await upsertProductRequest(productUpsert)
+        toast.success("Produto atualizado com sucesso!");
+      } else {
+        productUpsert = {
+          ...values,
+          registerUserId: auth.id,
+        };
+        await upsertProductRequest(productUpsert)
+        toast.success("Produto criado com sucesso!");
+      }
+      setLoading(false)
+      addProduct(productUpsert)
+    } catch (error) {
+      setLoading(false)
+      console.error(error)
+      toast.error("Ocorreu um erro ao criar/atualizar o produto");
     }
-    mutate(productUpsert, {
-      onSuccess: () => {
-        form.reset(); // Reseta o formulário após o envio
-        setIsOpen(false);
-      },
-    });
+    form.reset(); // Reseta o formulário após o envio
+    setIsOpen(false);
   };
 
   return (
@@ -320,7 +332,7 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
                   )}
                 />
 
-                {isPending ? (
+                {loading ? (
                   <Button className="text-white" disabled>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Cadastrando

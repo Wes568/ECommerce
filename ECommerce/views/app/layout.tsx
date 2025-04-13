@@ -5,7 +5,7 @@ import Header from "./_components/header/header";
 import { AuthProvider } from "./_contexts/auth-context";
 import { Toaster } from "./_components/ui/sonner";
 import React from "react"; // Import necessário para React.StrictMode
-import { QueryProvider } from "./_providers/query-provider";
+import { ProductUserProvider } from "./_contexts/product-user";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],
@@ -24,13 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${mulish.className} antialiased light`}>
-        <QueryProvider>
-          <Toaster />
-          <AuthProvider>
+        <Toaster />
+        <AuthProvider>
+          <ProductUserProvider>
             <Header />
             {children}
-          </AuthProvider>
-        </QueryProvider>
+          </ProductUserProvider>
+        </AuthProvider>
       </body>
     </html>
   );

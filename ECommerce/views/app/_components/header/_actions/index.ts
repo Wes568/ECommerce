@@ -16,13 +16,13 @@ interface RegisterInterface {
 
 
 export const loginRequest = async (credentials: LoginInterface) => {
-  const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Login`, credentials);
+  const response = await api.post(`/Account/Login`, credentials);
   return response.data;
 };
 
 
 export const registerRequest = async (credentials: RegisterInterface) => {
-  const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/Account/Register`, credentials);
+  const response = await api.post(`/Account/Register`, credentials);
   return response.data;
 };
 

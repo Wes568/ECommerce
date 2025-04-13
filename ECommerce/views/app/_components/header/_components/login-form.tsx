@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Menubar,
   MenubarContent,
@@ -24,7 +24,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import RegisterForm from "./register-form";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { useLogin } from "@/app/_hooks/user";
+import { toast } from "sonner";
+import { loginRequest } from "../_actions";
 
 const formSchema = z.object({
   userName: z
@@ -37,8 +38,8 @@ const formSchema = z.object({
 
 const LoginForm = () => {
   const [view, setView] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { auth, setAuth } = useAuth();
-  const { mutate, isPending } = useLogin(setAuth);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,12 +49,22 @@ const LoginForm = () => {
     },
   });
 
-  useEffect(() => {
-    console.log("use effect do login", auth);
-  }, [auth]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    mutate(values);
+    try {
+      setLoading(true);
+      const data = await loginRequest(values)
+      setAuth({ username: data.user.userName, token: data.token, id: data.user.id });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("username", data.user.userName);
+      localStorage.setItem("userId", data.user.id);
+      toast.success(`Bem-vindo novamente, ${data.user.userName}`);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error)
+      toast.error("Ocorreu um erro ao registrar o usuário");
+    }
   };
 
   const logout = () => {
@@ -140,7 +151,7 @@ const LoginForm = () => {
                       Esqueci minha senha
                     </Link>
                     <div className="flex flex-col gap-2">
-                      {isPending ? (
+                      {loading ? (
                         <Button className="text-white" disabled>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Entrando
