@@ -13,7 +13,6 @@ export interface IProduct {
   preco: number;
   isProdutoPreferido: boolean;
   emEstoque: boolean;
-  dataCriacao?: Date;
   registerUserId?: string | null;
   categoria?: ICategory;
 }

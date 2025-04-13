@@ -180,35 +180,37 @@ namespace ECommerce.Migrations
                     b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DataAtualizacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataRegistro")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("DescricaoCurta")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("DescricaoDetalhada")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("EmEstoque")
                         .HasColumnType("bit");
 
                     b.Property<string>("ImagemThumbnailUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ImagemUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool>("IsProdutoPreferido")
                         .HasColumnType("bit");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
 
                     b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("RegisterUserId")
                         .HasColumnType("nvarchar(max)");

@@ -17,8 +17,6 @@ namespace ECommerce.Models
         public bool IsProdutoPreferido { get; set; }
         public string RegisterUserId { get; set; }
         public bool EmEstoque { get; set; }
-        public DateTime DataRegistro {get;set;}
-        public DateTime DataAtualizacao { get; set; }
         public int CategoriaId { get; set; }
         public virtual Categoria Categoria { get; set; }
     }

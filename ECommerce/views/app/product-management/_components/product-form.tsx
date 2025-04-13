@@ -101,14 +101,13 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
           ...values,
           produtoId: product.produtoId,
           registerUserId: auth.id,
-          dataCriacao: product.dataCriacao,
         };
         await upsertProductRequest(productUpsert)
         toast.success("Produto atualizado com sucesso!");
       } else {
         productUpsert = {
           ...values,
-            registerUserId: auth.id,
+          registerUserId: auth.id,
         };
         await upsertProductRequest(productUpsert)
         toast.success("Produto criado com sucesso!");
