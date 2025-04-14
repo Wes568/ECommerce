@@ -49,12 +49,15 @@ const LoginForm = () => {
     },
   });
 
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setLoading(true);
-      const data = await loginRequest(values)
-      setAuth({ username: data.user.userName, token: data.token, id: data.user.id });
+      const data = await loginRequest(values);
+      setAuth({
+        username: data.user.userName,
+        token: data.token,
+        id: data.user.id,
+      });
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.user.userName);
       localStorage.setItem("userId", data.user.id);
@@ -62,8 +65,8 @@ const LoginForm = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log(error)
-      toast.error("Ocorreu um erro ao registrar o usuário");
+      console.log(error);
+      toast.error("Ocorreu um erro ao logar o usuário");
     }
   };
 

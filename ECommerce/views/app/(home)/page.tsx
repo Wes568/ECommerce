@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Loading from "../_components/loading";
-import ProductCard from "../_components/product-card";
-import { IProduct } from "../product-management/_actions";
+import ProductCard from "../product/_components/product-card";
+import { IProduct } from "../product/_actions";
 import { allProductsRequest } from "./_actions";
 import { toast } from "sonner";
 
@@ -15,8 +15,9 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await allProductsRequest()
-        setCategory(data.products.categoriaAtual)
+        setLoading(true);
+        const data = await allProductsRequest();
+        setCategory(data.products.categoriaAtual);
         setData(data.products.produtos);
       } catch (error) {
         console.error("Erro ao buscar produtos:", error);
@@ -25,7 +26,7 @@ const Home = () => {
         setLoading(false);
       }
     };
-    fetchProducts()
+    fetchProducts();
   }, []);
 
   return (

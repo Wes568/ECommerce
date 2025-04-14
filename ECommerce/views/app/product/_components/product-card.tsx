@@ -1,12 +1,12 @@
 import React from "react";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Badge } from "../../_components/ui/badge";
+import { Button } from "../../_components/ui/button";
 import Link from "next/link";
-import ProductForm from "../product-management/_components/product-form";
-import { Trash } from "lucide-react";
-import { useAuth } from "../_contexts/auth-context";
+import { useAuth } from "../../_contexts/auth-context";
 import { usePathname } from "next/navigation";
-import { IProduct } from "../product-management/_actions";
+import { IProduct } from "../_actions";
+import ProductForm from "./product-form";
+import ProductDelete from "./product-delete";
 
 interface ProductCardProps {
   product: IProduct;
@@ -38,7 +38,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               pathname === "/product-management" && (
                 <div className="flex gap-2">
                   <ProductForm product={product} edit={true} />
-                  <Trash size={16} className="text-primary cursor-pointer" />
+                  <ProductDelete productId={product.produtoId} />
                 </div>
               )}
           </div>
