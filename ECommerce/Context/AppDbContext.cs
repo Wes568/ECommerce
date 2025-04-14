@@ -17,5 +17,6 @@ namespace ECommerce.Context
         public DbSet<CarrinhoCompraItem> CarrinhoCompraItens { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<PedidoDetalhe> PedidoDetalhes { get; set; }
+        public DbSet<Avaliacao> Avaliacoes { get; set; }
     }
 }
