@@ -36,9 +36,18 @@ export const upsertProductRequest = async (product: IProduct) => {
   return response.data
 }
 
-export const getProductsByUser = async (userId: string | null ) => {
+export const getProductsByUser = async (userId: string | null) => {
   try {
     const response = await api.get(`/Produto/ListProductsByUser/?userId=${userId}`)
+    return response.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const deleteProductRequest = async (productId: string | undefined) => {
+  try {
+    const response = await api.delete(`/Produto/Delete/?productId=${productId}`)
     return response.data
   } catch (error) {
     console.error(error)

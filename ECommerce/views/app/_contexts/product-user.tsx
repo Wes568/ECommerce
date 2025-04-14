@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { IProduct } from "../product-management/_actions";
-
+import { IProduct } from "../product/_actions";
 
 interface IProductsUserContext {
   products: IProduct[];
@@ -24,8 +23,8 @@ export const ProductUserProvider = ({ children }: ProductUserProviderProps) => {
 
   const addProduct = (product: IProduct) => {
     setProducts((prev) => {
-      const index = prev.findIndex(p => p.produtoId === product.produtoId);
-  
+      const index = prev.findIndex((p) => p.produtoId === product.produtoId);
+
       if (index !== -1) {
         const updated = [...prev];
         updated[index] = product;
@@ -35,14 +34,15 @@ export const ProductUserProvider = ({ children }: ProductUserProviderProps) => {
       }
     });
   };
-  
 
   const removeProduct = (produtoId: string) => {
     setProducts((prev) => prev.filter((item) => item.produtoId !== produtoId));
   };
 
   return (
-    <ProductUser.Provider value={{ products, setProducts, addProduct, removeProduct }}>
+    <ProductUser.Provider
+      value={{ products, setProducts, addProduct, removeProduct }}
+    >
       {children}
     </ProductUser.Provider>
   );
