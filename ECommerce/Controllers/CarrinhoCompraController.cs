@@ -2,7 +2,11 @@
 using ECommerce.Repositories.Interfaces;
 using ECommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace ECommerce.Controllers
 {
@@ -17,46 +21,96 @@ namespace ECommerce.Controllers
             _carrinhoCompra = carrinhoCompra;
         }
 
-        public IActionResult Index()
+        [Authorize]
+        public IActionResult GetCarrinho()
         {
 
-            var itens = _carrinhoCompra.GetCarrinhoCompraItens();
-            _carrinhoCompra.CarrinhoCompraItens = itens;
-
-            var carrinhoCompraVM = new CarrinhoCompraViewModel
+            try
             {
-                CarrinhoCompra = _carrinhoCompra,
-                CarrinhoCompraTotal = _carrinhoCompra.GetCarrinhoCompraTotal()
-            };
+                var itens = _carrinhoCompra.GetCarrinhoCompraItens();
 
-            return View(carrinhoCompraVM);
+                var carrinhoCompraVM = new CarrinhoCompraViewModel
+                {
+                    CarrinhoCompra = _carrinhoCompra,
+                    RegisterUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                    CarrinhoCompraTotal = _carrinhoCompra.GetCarrinhoCompraTotal()
+                };
 
+                return Ok(new
+                {
+                    carrinho = carrinhoCompraVM,
+                    error = false,
+                    errorMessage = ""
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    product = "",
+                    error = true,
+                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao obter itens do carrinho."
+                });
+            }
         }
 
-        [Authorize]
-        public IActionResult AdicionarItemNoCarrinhoCompra(int ProdutoId)
+        [HttpPost]
+        public IActionResult AdicionarItemNoCarrinhoCompra([FromBody] int produtoId)
         {
-            var Produtoselecionado = _ProdutoRepository.Produtos.FirstOrDefault(p => p.ProdutoId == ProdutoId);
 
-            if(Produtoselecionado != null)
+            try
             {
-                _carrinhoCompra.AdicionarAoCarrinho(Produtoselecionado);
-            }
+                var produtoselecionado = _ProdutoRepository.Produtos.FirstOrDefault(p => p.ProdutoId == produtoId);
 
-            return RedirectToAction("Index");
+                if (produtoselecionado != null)
+                    _carrinhoCompra.AdicionarAoCarrinho(produtoselecionado);
+
+                return Ok(new
+                {
+                    error = false,
+                    errorMessage = ""
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    error = true,
+                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao adicionar item ao carrinho."
+                });
+            }
         }
 
-        [Authorize]
-        public IActionResult RemoverItemDoCarrinhoCompra(int ProdutoId)
+        [HttpPost]
+        public IActionResult RemoverItemDoCarrinhoCompra([FromBody] int produtoId)
         {
-            var Produtoselecionado = _ProdutoRepository.Produtos.FirstOrDefault(p => p.ProdutoId == ProdutoId);
 
-            if (Produtoselecionado != null)
+            try
             {
-                _carrinhoCompra.RemoverDoCarrinho(Produtoselecionado);
-            }
+                var produtoselecionado = _ProdutoRepository.Produtos.FirstOrDefault(p => p.ProdutoId == produtoId);
 
-            return RedirectToAction("Index");
+                if (produtoselecionado != null)
+                {
+                    _carrinhoCompra.RemoverDoCarrinho(produtoselecionado);
+                }
+
+                return Ok(new
+                {
+                    error = false,
+                    errorMessage = ""
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    error = true,
+                    errorMessage = ex.Message == "" ? ex.Message : "Erro ao remover item do carrinho."
+                });
+            }
         }
     }
 }

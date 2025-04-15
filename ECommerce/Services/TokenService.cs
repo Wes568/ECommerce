@@ -21,12 +21,15 @@ namespace ECommerce.Services
         public JwtSecurityToken GenerateToken(IdentityUser user, IEnumerable<Claim> additionalClaims = null)
         {
             var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id), 
+                new Claim(ClaimTypes.Name, user.UserName),     
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
 
             if (additionalClaims != null)
             {
@@ -60,20 +63,20 @@ namespace ECommerce.Services
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    ValidIssuer = "ecommerce", 
-                    ValidAudience = "ecommerce", 
+                    ValidIssuer = "ecommerce",
+                    ValidAudience = "ecommerce",
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
 
                 var principal = tokenHandler.ValidateToken(token, parameters, out SecurityToken validatedToken);
-                var userName = principal.Identity.Name;
-                               
-                if (userName == null)
+                var userId = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+
+                if (userId == null)
                 {
                     throw new Exception("Token não contém o ID do usuário.");
                 }
 
-                return userName;
+                return userId;
 
             }
             catch (Exception ex)
