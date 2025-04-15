@@ -57,10 +57,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </Badge>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <Button className="mt-5 text-white">Adicionar ao carrinho</Button>
-        <Button className="bg-foreground text-white" asChild>
+      <div className="flex mt-5 flex-col gap-2">
+        <Button className="text-white" asChild>
           <Link href={`product/${product.produtoId}`}>Comprar agora</Link>
+        </Button>
+        <Button className=" bg-foreground text-white">
+          Adicionar ao carrinho
         </Button>
       </div>
     </div>

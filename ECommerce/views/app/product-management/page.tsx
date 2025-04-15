@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Loading from "../components/loading";
 import { useAuth } from "../_contexts/auth-context";
-import { useProductUser } from "../_contexts/product-user";
+import { useProductUser } from "../_contexts/product-user-context";
 import { getProductsByUserRequest } from "../_actions/product";
 import ProductForm from "../product/components/product-form";
 import ProductCard from "../product/components/product-card";

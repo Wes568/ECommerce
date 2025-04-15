@@ -10,7 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/app/components/ui/alert-dialog";
 import { Button } from "@/app/components/ui/button";
-import { useProductUser } from "@/app/_contexts/product-user";
+import { useProductUser } from "@/app/_contexts/product-user-context";
 import { Loader2, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { deleteProductRequest } from "@/app/_actions/product";
