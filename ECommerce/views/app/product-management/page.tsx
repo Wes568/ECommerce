@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Loading from "../components/loading";
 import ProductCard from "../product/_components/product-card";
 import { useAuth } from "../_contexts/auth-context";
@@ -13,18 +13,18 @@ const ProductManagement = () => {
   const { auth } = useAuth();
   const { products, setProducts } = useProductUser();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const response = await getProductsByUserRequest(auth.id);
-      setProducts(response.products);
-      setLoading(false);
-    };
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    const response = await getProductsByUserRequest(auth.id);
+    setProducts(response.products);
+    setLoading(false);
+  }, [auth.id, setProducts]);
 
-    if (auth.id) {
-      fetchProducts();
-    }
-  }, [auth.id]);
+  useEffect(() => {
+    if (!auth.id) return;
+    fetchProducts();
+  }, [fetchProducts, auth.id]);
+
   return (
     <section>
       <div className="bg-foreground mt-[98px] lg:mt-[134px]">

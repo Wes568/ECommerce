@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Loading from "../components/loading";
 import ProductCard from "../product/_components/product-card";
 import { IProduct } from "../_types/product";
@@ -11,16 +11,17 @@ const Home = () => {
   const [data, setData] = useState<IProduct[]>([]);
   const [category, setCategory] = useState<string>();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const response = await allProductsRequest();
-      setLoading(false);
-      setCategory(response.products.categoriaAtual);
-      setData(response.products.produtos);
-    };
-    fetchProducts();
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    const response = await allProductsRequest();
+    setLoading(false);
+    setCategory(response.products.categoriaAtual);
+    setData(response.products.produtos);
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   return (
     <section>

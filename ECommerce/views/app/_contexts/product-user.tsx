@@ -11,7 +11,9 @@ interface IProductsUserContext {
 }
 
 // Criando o contexto
-const ProductUser = createContext<IProductsUserContext | undefined>(undefined);
+const ProductUser = createContext<IProductsUserContext>(
+  {} as IProductsUserContext
+);
 
 // Provedor do contexto
 interface ProductUserProviderProps {
