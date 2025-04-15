@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { IProduct } from "../product/_actions";
+import { IProduct } from "../_types/product";
 
 interface IProductsUserContext {
   products: IProduct[];

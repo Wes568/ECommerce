@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Loading from "../_components/loading";
+import Loading from "../components/loading";
 import ProductCard from "../product/_components/product-card";
 import { useAuth } from "../_contexts/auth-context";
-import { getProductsByUser } from "../product/_actions";
-import { toast } from "sonner";
 import { useProductUser } from "../_contexts/product-user";
 import ProductForm from "../product/_components/product-form";
+import { getProductsByUserRequest } from "../_actions/product";
 
 const ProductManagement = () => {
   const [loading, setLoading] = useState(false);
@@ -16,15 +15,10 @@ const ProductManagement = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const data = await getProductsByUser(auth.id);
-        setProducts(data.products);
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-        toast.error("Ocorreu um erro ao buscar os produtos");
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const response = await getProductsByUserRequest(auth.id);
+      setProducts(response.products);
+      setLoading(false);
     };
 
     if (auth.id) {
@@ -47,8 +41,8 @@ const ProductManagement = () => {
         ) : (
           <div className="flex justify-center flex-wrap gap-5 lg:justify-normal">
             {products &&
-              products.map((item) => (
-                <ProductCard key={item.nome} product={item} />
+              products.map((item, index) => (
+                <ProductCard key={index} product={item} />
               ))}
           </div>
         )}
