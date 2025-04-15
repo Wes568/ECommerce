@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import Loading from "../components/loading";
-import ProductCard from "../product/_components/product-card";
+import ProductCard from "../product/components/product-card";
 import { IProduct } from "../_types/product";
 import { allProductsRequest } from "../_actions/product";
 

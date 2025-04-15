@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Loading from "../components/loading";
-import ProductCard from "../product/_components/product-card";
 import { useAuth } from "../_contexts/auth-context";
 import { useProductUser } from "../_contexts/product-user";
-import ProductForm from "../product/_components/product-form";
 import { getProductsByUserRequest } from "../_actions/product";
+import ProductForm from "../product/components/product-form";
+import ProductCard from "../product/components/product-card";
 
 const ProductManagement = () => {
   const [loading, setLoading] = useState(false);

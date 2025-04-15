@@ -1,9 +1,9 @@
 "use client";
-import { getProductDetails } from "@/app/_actions/product";
-import { IProduct } from "@/app/_types/product";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import ProductPurchase from "../_components/product-purchase";
+import ProductPurchase from "../components/product-purchase";
+import { IProduct } from "../../_types/product";
+import { getProductDetails } from "@/app/_actions/product";
 
 const Product = () => {
   const [product, setProduct] = useState<IProduct>({} as IProduct);
