@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Loading from "../_components/loading";
+import Loading from "../components/loading";
 import ProductCard from "../product/_components/product-card";
-import { IProduct } from "../product/_actions";
-import { allProductsRequest } from "./_actions";
-import { toast } from "sonner";
+import { IProduct } from "../_types/product";
+import { allProductsRequest } from "../_actions/product";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -14,17 +13,11 @@ const Home = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const data = await allProductsRequest();
-        setCategory(data.products.categoriaAtual);
-        setData(data.products.produtos);
-      } catch (error) {
-        console.error("Erro ao buscar produtos:", error);
-        toast.error("Ocorreu um erro ao buscar os produtos");
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      const response = await allProductsRequest();
+      setLoading(false);
+      setCategory(response.products.categoriaAtual);
+      setData(response.products.produtos);
     };
     fetchProducts();
   }, []);

@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/app/_components/ui/dialog";
-import { Button } from "@/app/_components/ui/button";
+} from "@/app/components/ui/dialog";
+import { Button } from "@/app/components/ui/button";
 import {
   Form,
   FormControl,
@@ -21,24 +21,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/app/_components/ui/form";
-import { Input } from "@/app/_components/ui/input";
-import { productsCategory } from "../_constants";
+} from "@/app/components/ui/form";
+import { Input } from "@/app/components/ui/input";
+import { productsCategory } from "../constants";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/_components/ui/select";
-import { MoneyInput } from "@/app/_components/money-input";
-import { Textarea } from "@/app/_components/ui/textarea";
-import { IProduct, upsertProductRequest } from "../_actions";
-import { Switch } from "@/app/_components/ui/switch";
-import { ScrollArea } from "@/app/_components/ui/scroll-area";
+} from "@/app/components/ui/select";
+import { MoneyInput } from "@/app/components/money-input";
+import { Textarea } from "@/app/components/ui/textarea";
+import { Switch } from "@/app/components/ui/switch";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { toast } from "sonner";
 import { useProductUser } from "@/app/_contexts/product-user";
+import { IProduct } from "@/app/_types/product";
+import { upsertProductRequest } from "@/app/_actions/product";
 
 const validCategoryValues = productsCategory.map((category) => category.value);
 
@@ -74,8 +74,7 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
-  const {addProduct} = useProductUser();
-
+  const { addProduct } = useProductUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,32 +93,24 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     let productUpsert: IProduct;
-    try {
-      setLoading(true)
-      if (product?.produtoId) {
-        productUpsert = {
-          ...values,
-          produtoId: product.produtoId,
-          registerUserId: auth.id,
-          dataCriacao: product.dataCriacao,
-        };
-        await upsertProductRequest(productUpsert)
-        toast.success("Produto atualizado com sucesso!");
-      } else {
-        productUpsert = {
-          ...values,
-            registerUserId: auth.id,
-        };
-        await upsertProductRequest(productUpsert)
-        toast.success("Produto criado com sucesso!");
-      }
-      setLoading(false)
-      addProduct(productUpsert)
-    } catch (error) {
-      setLoading(false)
-      console.error(error)
-      toast.error("Ocorreu um erro ao criar/atualizar o produto");
+    setLoading(true);
+    if (product?.produtoId) {
+      productUpsert = {
+        ...values,
+        produtoId: product.produtoId,
+        registerUserId: auth.id,
+        dataCriacao: product.dataCriacao,
+      };
+    } else {
+      productUpsert = {
+        ...values,
+        registerUserId: auth.id,
+      };
     }
+    await upsertProductRequest(productUpsert);
+    addProduct(productUpsert);
+    setLoading(false);
+
     form.reset(); // Reseta o formulário após o envio
     setIsOpen(false);
   };

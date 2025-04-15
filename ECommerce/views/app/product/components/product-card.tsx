@@ -38,9 +38,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               pathname === "/product-management" && (
                 <div className="flex gap-2">
                   <ProductForm product={product} edit={true} />
-                  {product.produtoId && (
-                    <ProductDelete productId={product.produtoId} />
-                  )}
+                  <ProductDelete productId={product.produtoId} />
                 </div>
               )}
           </div>
