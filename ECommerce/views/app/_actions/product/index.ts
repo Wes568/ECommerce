@@ -5,8 +5,8 @@ import { ApiRequisition } from "..";
 
 const req = new ApiRequisition()
 
-export const allProductsRequest = async () => {
-  const response = await req.setPayload({
+export const allProductsRequest = () => {
+  const response = req.setPayload({
     url: "/Produto/Search/?searchString=",
     messageError: "Erro ao buscar os produtos",
   }).get();
@@ -19,6 +19,14 @@ export const getProductsByUserRequest = async (userId: string | null) => {
     messageError: "Erro ao buscar os produtos do usuário",
   }).get();
   return response;
+}
+
+export const getProductDetails = async (productId: number) => {
+  const response = await req.setPayload({
+    url: `/Produto/Details/?productId=${productId}`,
+    messageError: "Erro ao buscar os detalhes do produto",
+  }).get()
+  return response
 }
 
 export const upsertProductRequest = async (product: IProduct) => {

@@ -6,7 +6,7 @@ import {
   MenubarContent,
   MenubarMenu,
   MenubarTrigger,
-} from "../../ui/menubar";
+} from "../ui/menubar";
 import { CircleUserRound, Eye, EyeOff, Loader2 } from "lucide-react";
 import {
   Form,
@@ -15,16 +15,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../ui/form";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import RegisterForm from "./register-form";
 import { useAuth } from "@/app/_contexts/auth-context";
 import { loginRequest } from "@/app/_actions/user";
+import RegisterForm from "./register-form";
 
 const formSchema = z.object({
   userName: z

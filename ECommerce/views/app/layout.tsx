@@ -5,7 +5,7 @@ import Header from "./components/header/header";
 import { AuthProvider } from "./_contexts/auth-context";
 import { Toaster } from "./components/ui/sonner";
 import React from "react"; // Import necessário para React.StrictMode
-import { ProductUserProvider } from "./_contexts/product-user";
+import { ProductUserProvider } from "./_contexts/product-user-context";
 
 const mulish = Mulish({
   subsets: ["latin-ext"],

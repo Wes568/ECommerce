@@ -36,7 +36,7 @@ import { Textarea } from "@/app/components/ui/textarea";
 import { Switch } from "@/app/components/ui/switch";
 import { ScrollArea } from "@/app/components/ui/scroll-area";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { useProductUser } from "@/app/_contexts/product-user";
+import { useProductUser } from "@/app/_contexts/product-user-context";
 import { IProduct } from "@/app/_types/product";
 import { upsertProductRequest } from "@/app/_actions/product";
 

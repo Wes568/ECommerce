@@ -17,7 +17,7 @@ interface IChildren {
   children: React.ReactNode;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: IChildren) => {
   const [auth, setAuth] = useState<IAuth>({
