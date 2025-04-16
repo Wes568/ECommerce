@@ -76,11 +76,11 @@ namespace ECommerce.Controllers
         {
             try
             {
-                var product = _ProdutoRepository.GetProdutoById(productId);
+                Produto product = _ProdutoRepository.GetProdutoById(productId);
 
                 return Ok(new
                 {
-                    product = product,
+                    product,
                     error = false,
                     errorMessage = ""
 

@@ -19,7 +19,7 @@ namespace ECommerce.Repositories
 
         public Produto GetProdutoById(int produtoId)
         {
-            return _context.Produtos.FirstOrDefault(l => l.ProdutoId == produtoId);
+            return _context.Produtos.Include(c => c.Categoria).FirstOrDefault(l => l.ProdutoId == produtoId); ;
         }
 
         public void Register(Produto pedido)
