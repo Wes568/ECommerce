@@ -1,60 +1,58 @@
-'use client'
+"use server"
 
 import { IProduct } from "@/app/_types/product";
-import { ApiRequisition } from "..";
+import { api } from "..";
+import { revalidatePath } from "next/cache";
 
-const req = new ApiRequisition()
 
-export const allProductsRequest = () => {
-  const response = req.setPayload({
-    url: "/Produto/Search/?searchString=",
-    messageError: "Erro ao buscar os produtos",
-  }).get();
-  return response;
+export const allProductsRequest = async () => {
+  try {
+    const { data } = await api.get("/Produto/Search/?searchString=")
+    return data;
+  } catch (error) {
+    return error
+  }
 };
 
 export const getProductsByUserRequest = async (userId: string | null) => {
-  const response = await req.setPayload({
-    url: `/Produto/ListProductsByUser/?userId=${userId}`,
-    messageError: "Erro ao buscar os produtos do usuário",
-  }).get();
-  return response;
+  try {
+    const { data } = await api.get(`/Produto/ListProductsByUser/?userId=${userId}`)
+    return data;
+  } catch (error) {
+    return error
+  }
 }
 
 export const getProductDetails = async (productId: number) => {
-  const response = await req.setPayload({
-    url: `/Produto/Details/?productId=${productId}`,
-    messageError: "Erro ao buscar os detalhes do produto",
-  }).get()
-  return response
+  try {
+    const { data } = await api.get(`/Produto/Details/?productId=${productId}`)
+    return data;
+  } catch (error) {
+    return error
+  }
 }
 
 export const upsertProductRequest = async (product: IProduct) => {
   let response;
-
-  if (product.produtoId) {
-    response = await req.setPayload({
-      url: "/Produto/Update/",
-      content: product,
-      messageSuccess: "Produto atualizado com sucesso!",
-      messageError: "Erro ao atualizar o produto",
-    }).put();
-  } else {
-    response = await req.setPayload({
-      url: "/Produto/Register",
-      content: product,
-      messageSuccess: "Produto inserido com sucesso!",
-      messageError: "Erro ao inserir o produto",
-    }).post();
+  try {
+    if (product.produtoId) {
+      response = await api.put("/Produto/Update/", product)
+    } else {
+      response = await api.post("/Produto/Register", product)
+    }
+    revalidatePath("/product-management")
+    return response.data;
+  } catch (error) {
+    return error
   }
-  return response.data
 }
 
 export const deleteProductRequest = async (productId: string) => {
-  const response = await req.setPayload({
-    url: `/Produto/Delete/?productId=${productId}`,
-    messageSuccess: "Produto excluido com sucesso!",
-    messageError: "Erro ao excluir o produto",
-  }).delete();
-  return response
+  try {
+    const { data } = await api.delete(`/Produto/Delete/?productId=${productId}`)
+    revalidatePath("/product-management")
+    return data
+  } catch (error) {
+    return error
+  }
 }

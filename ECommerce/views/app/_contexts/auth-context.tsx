@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { getCookie } from "../_global/functions";
 
 export interface IAuth {
   id: string | null;
@@ -27,9 +28,9 @@ export const AuthProvider = ({ children }: IChildren) => {
   });
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUsername = localStorage.getItem("username");
-    const storedUserId = localStorage.getItem("userId");
+    const storedToken = getCookie("token");
+    const storedUsername = getCookie("username");
+    const storedUserId = getCookie("userId");
     if (storedToken && storedUsername && storedUserId) {
       setAuth({
         id: storedUserId,
@@ -49,7 +50,7 @@ export const AuthProvider = ({ children }: IChildren) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth tem que estar dentro de AuthProvider");
   }
   return context;
 };

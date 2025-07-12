@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/app/components/ui/dialog";
-import { Button } from "@/app/components/ui/button";
+} from "@/app/_components/ui/dialog";
+import { Button } from "@/app/_components/ui/button";
 import {
   Form,
   FormControl,
@@ -21,8 +21,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/app/components/ui/form";
-import { Input } from "@/app/components/ui/input";
+} from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
 import { productsCategory } from "../constants";
 import {
   Select,
@@ -30,11 +30,11 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components/ui/select";
-import { MoneyInput } from "@/app/components/money-input";
-import { Textarea } from "@/app/components/ui/textarea";
-import { Switch } from "@/app/components/ui/switch";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
+} from "@/app/_components/ui/select";
+import { MoneyInput } from "@/app/_components/money-input";
+import { Textarea } from "@/app/_components/ui/textarea";
+import { Switch } from "@/app/_components/ui/switch";
+import { ScrollArea } from "@/app/_components/ui/scroll-area";
 import { useAuth } from "@/app/_contexts/auth-context";
 import { useProductUser } from "@/app/_contexts/product-user-context";
 import { IProduct } from "@/app/_types/product";
@@ -111,7 +111,7 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
     addProduct(productUpsert);
     setLoading(false);
 
-    form.reset(); // Reseta o formulário após o envio
+    form.reset();
     setIsOpen(false);
   };
 
@@ -277,7 +277,7 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
                         <MoneyInput
                           placeholder="Digite o preço"
                           value={field.value}
-                          onValueChange={({ floatValue }) =>
+                          onValueChange={({ floatValue }: any) =>
                             field.onChange(floatValue)
                           }
                           onBlur={field.onBlur}

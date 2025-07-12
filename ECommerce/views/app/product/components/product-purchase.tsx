@@ -1,8 +1,10 @@
+"use client";
+
 import { IProduct } from "@/app/_types/product";
-import RatingStars from "@/app/components/rating-stars";
-import { Badge } from "@/app/components/ui/badge";
-import { Button } from "@/app/components/ui/button";
-import { currencyFormat } from "@/app/global/functions";
+import RatingStars from "@/app/_components/rating-stars";
+import { Badge } from "@/app/_components/ui/badge";
+import { Button } from "@/app/_components/ui/button";
+import { currencyFormat } from "@/app/_global/functions";
 import { MinusCircle, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import PaymentOptions from "./payment-options";

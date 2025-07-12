@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "@/app/_contexts/auth-context";
 import { loginRequest } from "@/app/_actions/user";
 import RegisterForm from "./register-form";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   userName: z
@@ -50,20 +51,32 @@ const LoginForm = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
-    const data = await loginRequest(values);
-    setAuth({
-      username: data.user.userName,
-      token: data.token,
-      id: data.user.id,
-    });
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("username", data.user.userName);
-    localStorage.setItem("userId", data.user.id);
+    try {
+      const data = await loginRequest(values);
+
+      setAuth({
+        username: data.user.userName,
+        token: data.token,
+        id: data.user.id,
+      });
+
+      document.cookie = `userId=${data.user.id}; path=/; max-age=3600;`;
+      document.cookie = `username=${data.user.userName}; path=/; max-age=3600;`;
+      document.cookie = `token=${data.token}; path=/; max-age=3600;`; // 1 hora
+
+      toast.success(`Bem-vindo(a), novamente ${data.user.userName}!`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao entrar, por favor tente novamente.");
+    }
+
     setLoading(false);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    document.cookie = "userId=; path=/; max-age=0;";
+    document.cookie = "username=; path=/; max-age=0;";
+    document.cookie = "token=; path=/; max-age=0;";
     setAuth({ username: null, token: null, id: null });
   };
 

@@ -8,8 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/app/components/ui/alert-dialog";
-import { Button } from "@/app/components/ui/button";
+} from "@/app/_components/ui/alert-dialog";
+import { Button } from "@/app/_components/ui/button";
 import { useProductUser } from "@/app/_contexts/product-user-context";
 import { Loader2, Trash } from "lucide-react";
 import React, { useState } from "react";

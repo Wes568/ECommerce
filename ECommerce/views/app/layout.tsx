@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
 import "./globals.css";
-import Header from "./components/header/header";
+import Header from "./_components/header/header";
 import { AuthProvider } from "./_contexts/auth-context";
-import { Toaster } from "./components/ui/sonner";
+import { Toaster } from "./_components/ui/sonner";
 import React from "react"; // Import necessário para React.StrictMode
 import { ProductUserProvider } from "./_contexts/product-user-context";
 

@@ -54,7 +54,9 @@ export const ProductUserProvider = ({ children }: ProductUserProviderProps) => {
 export const useProductUser = () => {
   const context = useContext(ProductUser);
   if (!context) {
-    throw new Error("useProductUser must be used within a ProductUserProvider");
+    throw new Error(
+      "useProductUser tem que estar dentro de ProductUserProvider"
+    );
   }
   return context;
 };

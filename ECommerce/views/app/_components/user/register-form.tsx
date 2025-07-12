@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/app/_contexts/auth-context";
 import { registerRequest } from "@/app/_actions/user";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   userName: z
@@ -59,13 +60,21 @@ const RegisterForm = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
-    const data = await registerRequest(values);
-    setAuth({
-      username: data.user.userName,
-      token: data.token,
-      id: data.user.id,
-    });
-    localStorage.setItem("token", data.token);
+    try {
+      const data = await registerRequest(values);
+      setAuth({
+        username: data.user.userName,
+        token: data.token,
+        id: data.user.id,
+      });
+      localStorage.setItem("token", data.token);
+      toast.success(`Bem-vindo(a), ${data.userName}!`);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        `Ocorreu um erro ao se registrar, por favor tente novamente.`
+      );
+    }
     setLoading(false);
   };
 

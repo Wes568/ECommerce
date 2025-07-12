@@ -14,6 +14,11 @@ export interface IProduct {
   categoria?: ICategory;
 }
 
+export interface IProducts {
+  produtos: IProduct[];
+  categoriaAtual: string;
+}
+
 interface ICategory {
   categoriaId: number;
   nome: string;
