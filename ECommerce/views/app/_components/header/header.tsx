@@ -48,7 +48,7 @@ const Header = () => {
             <div className="hidden lg:flex lg:items-center lg:gap-10">
               <LoginForm />
               <MenuShoppingCar />
-              {auth.token && (
+              {auth.id && (
                 <Link href={"/product-management"}>
                   <PackagePlus />
                 </Link>

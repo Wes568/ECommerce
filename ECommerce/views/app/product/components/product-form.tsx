@@ -276,10 +276,10 @@ const ProductForm = ({ product, edit }: ProductFormProps) => {
                       <FormControl>
                         <MoneyInput
                           placeholder="Digite o preço"
-                          value={field.value}
-                          onValueChange={({ floatValue }: any) =>
-                            field.onChange(floatValue)
-                          }
+                          value={field.value ?? 0}
+                          onValueChange={(values) => {
+                            field.onChange(values.floatValue ?? 0);
+                          }}
                           onBlur={field.onBlur}
                           disabled={field.disabled}
                         />

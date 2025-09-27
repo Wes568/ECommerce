@@ -23,9 +23,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <div className="bg-glass shadow-md flex justify-between flex-col w-72 rounded-sm p-4 transition duration-300 hover:scale-105">
+    <div className="bg-glass shadow-md w-100 flex justify-between flex-col w-72 rounded-3xl p-4 transition duration-300 hover:scale-105">
       <img
-        className="h-64 rounded-sm relative"
+        className="h-64 rounded-3xl relative"
         alt="Imagem do Produto"
         src={product.imagemUrl ?? ""}
         width={300}
@@ -33,7 +33,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="flex mt-2 gap-2 flex-col">
         <div className="flex flex-col">
           <div className="flex gap-2 justify-between items-center">
-            <h2 className="text-sm">{product.nome}</h2>
+            <div className="flex flex-col items-start">
+              <h2 className="text-lg font-bold">{product.nome}</h2>
+              <span className="text-xs font-semidbold">
+                {product.descricaoCurta}
+              </span>
+            </div>
             {auth.id === product.registerUserId &&
               pathname === "/product-management" && (
                 <div className="flex gap-2">
@@ -58,10 +63,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </div>
       <div className="flex mt-5 flex-col gap-2">
-        <Button className="text-white" asChild>
+        <Button size={"sm"} className="text-white" asChild>
           <Link href={`product/${product.produtoId}`}>Comprar agora</Link>
         </Button>
-        <Button className=" bg-foreground text-white">
+        <Button size={"sm"} className=" bg-foreground text-white">
           Adicionar ao carrinho
         </Button>
       </div>

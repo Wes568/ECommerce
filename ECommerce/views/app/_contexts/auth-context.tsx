@@ -6,7 +6,6 @@ import { getCookie } from "../_global/functions";
 export interface IAuth {
   id: string | null;
   username?: string | null;
-  token: string | null;
 }
 
 interface AuthContextType {
@@ -24,18 +23,15 @@ export const AuthProvider = ({ children }: IChildren) => {
   const [auth, setAuth] = useState<IAuth>({
     id: null,
     username: null,
-    token: null,
   });
 
   useEffect(() => {
-    const storedToken = getCookie("token");
     const storedUsername = getCookie("username");
     const storedUserId = getCookie("userId");
-    if (storedToken && storedUsername && storedUserId) {
+    if (storedUsername && storedUserId) {
       setAuth({
         id: storedUserId,
         username: storedUsername,
-        token: storedUsername,
       });
     }
   }, []);

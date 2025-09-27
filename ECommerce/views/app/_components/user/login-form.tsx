@@ -23,7 +23,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/app/_contexts/auth-context";
-import { loginRequest } from "@/app/_actions/user";
+import { loginRequest, logoutRequest } from "@/app/_actions/user";
 import RegisterForm from "./register-form";
 import { toast } from "sonner";
 
@@ -53,16 +53,10 @@ const LoginForm = () => {
     setLoading(true);
     try {
       const data = await loginRequest(values);
-
       setAuth({
         username: data.user.userName,
-        token: data.token,
         id: data.user.id,
       });
-
-      document.cookie = `userId=${data.user.id}; path=/; max-age=3600;`;
-      document.cookie = `username=${data.user.userName}; path=/; max-age=3600;`;
-      document.cookie = `token=${data.token}; path=/; max-age=3600;`; // 1 hora
 
       toast.success(`Bem-vindo(a), novamente ${data.user.userName}!`);
     } catch (error) {
@@ -73,20 +67,18 @@ const LoginForm = () => {
     setLoading(false);
   };
 
-  const logout = () => {
-    document.cookie = "userId=; path=/; max-age=0;";
-    document.cookie = "username=; path=/; max-age=0;";
-    document.cookie = "token=; path=/; max-age=0;";
-    setAuth({ username: null, token: null, id: null });
+  const logout = async () => {
+    await logoutRequest();
+    setAuth({ username: null, id: null });
   };
 
   return (
     <div>
-      <Menubar className="bg-primary">
+      <Menubar className="rounded-full bg-primary">
         <MenubarMenu>
-          <MenubarTrigger className="gap-2 bg-primary text-white">
+          <MenubarTrigger className="gap-2 rounded-full bg-primary text-white">
             <CircleUserRound size={30} />
-            {!auth.token ? (
+            {!auth.id ? (
               <div className="flex flex-col">
                 <h2 className="font-semibold ">Faça seu login</h2>
                 <p className="text-sm">ou Cadastre-se</p>
@@ -99,7 +91,7 @@ const LoginForm = () => {
             )}
           </MenubarTrigger>
           <MenubarContent className="p-4 w-[320px]">
-            {!auth.token ? (
+            {!auth.id ? (
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
@@ -175,7 +167,7 @@ const LoginForm = () => {
                 </form>
               </Form>
             ) : (
-              <div className="flex flex-col gap-2">
+              <div className="flex rounded-full flex-col gap-2">
                 <Button className="text-white">
                   <Link href={"/configuracoes"}>Configurações</Link>
                 </Button>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mulish } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 import Header from "./_components/header/header";
 import { AuthProvider } from "./_contexts/auth-context";
@@ -7,7 +7,7 @@ import { Toaster } from "./_components/ui/sonner";
 import React from "react"; // Import necessário para React.StrictMode
 import { ProductUserProvider } from "./_contexts/product-user-context";
 
-const mulish = Mulish({
+const nunito = Nunito({
   subsets: ["latin-ext"],
 });
 
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${mulish.className} antialiased light`}>
+      <body className={`${nunito.className} antialiased light`}>
         <Toaster />
         <AuthProvider>
           <ProductUserProvider>

@@ -7,7 +7,13 @@ const ProductManagement = async () => {
   const userId = (await cookieStore).get("userId")?.value;
   let response;
   if (userId) {
-    response = await getProductsByUserRequest(userId);
+    try {
+      response = await getProductsByUserRequest(userId);
+    } catch (error) {
+      alert("entrou");
+      response = { products: [] };
+      console.error(error);
+    }
   }
   return (
     <section>

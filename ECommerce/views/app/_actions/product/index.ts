@@ -10,7 +10,8 @@ export const allProductsRequest = async () => {
     const { data } = await api.get("/Produto/Search/?searchString=")
     return data;
   } catch (error) {
-    return error
+    console.error(error);
+    return { products: [] };
   }
 };
 
@@ -19,8 +20,10 @@ export const getProductsByUserRequest = async (userId: string | null) => {
     const { data } = await api.get(`/Produto/ListProductsByUser/?userId=${userId}`)
     return data;
   } catch (error) {
-    return error
+    console.error(error)
+    return { products: [] };
   }
+
 }
 
 export const getProductDetails = async (productId: number) => {
@@ -28,7 +31,8 @@ export const getProductDetails = async (productId: number) => {
     const { data } = await api.get(`/Produto/Details/?productId=${productId}`)
     return data;
   } catch (error) {
-    return error
+    console.error(error)
+    return { product: {} }
   }
 }
 
@@ -43,7 +47,7 @@ export const upsertProductRequest = async (product: IProduct) => {
     revalidatePath("/product-management")
     return response.data;
   } catch (error) {
-    return error
+    console.error(error)
   }
 }
 
@@ -53,6 +57,6 @@ export const deleteProductRequest = async (productId: string) => {
     revalidatePath("/product-management")
     return data
   } catch (error) {
-    return error
+    console.error(error)
   }
 }
