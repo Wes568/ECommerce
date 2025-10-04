@@ -1,4 +1,4 @@
-import { Star, StarHalf, StarOff } from "lucide-react";
+import { Star, StarHalf } from "lucide-react";
 import React from "react";
 
 interface RatingStarsProps {
@@ -18,11 +18,11 @@ const RatingStars = ({ rating }: RatingStarsProps) => {
   return (
     <div className="flex gap-2">
       {Array.from({ length: fullStars }, (_, i) => (
-        <Star color="gold" key={i} />
+        <Star fill="yellow" strokeWidth={1} size={20} key={i} />
       ))}
       {midStars ? <StarHalf color="gold" key="mid" /> : null}
       {Array.from({ length: emptyStart }, (_, i) => (
-        <StarOff color="red" key={i} />
+        <Star size={20} fill="#111" key={i} />
       ))}
       <span title="Média de avaliações">({media})</span>
     </div>
